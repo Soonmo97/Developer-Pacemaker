@@ -34,7 +34,7 @@ public class WebSecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/user/**").permitAll()
+                .requestMatchers("/api/user/**", "/api/gpt/ask").permitAll()
                 .anyRequest().authenticated()
             );
 
