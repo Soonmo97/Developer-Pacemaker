@@ -11,11 +11,14 @@ import project.developer_pacemaker.repository.UserRepository;
 @Slf4j
 public class UserService {
 
-    @Autowired
-    UserRepository userRepository;
+    final private UserRepository userRepository;
+    final private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    BCryptPasswordEncoder passwordEncoder;
+    public UserService(final UserRepository userRepository, final BCryptPasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public UserEntity create(final UserEntity userEntity) {
         if (userEntity == null || userEntity.getEmail() == null || userEntity.getNickname() == null ||

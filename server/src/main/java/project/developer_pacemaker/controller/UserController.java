@@ -15,14 +15,15 @@ import project.developer_pacemaker.service.UserService;
 @RequestMapping("/api/user")
 public class UserController {
 
+    final private UserService userService;
+    final private BCryptPasswordEncoder passwordEncoder;
+    final private TokenProvider tokenProvider;
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
-    private TokenProvider tokenProvider;
+    public UserController(final UserService userService, final BCryptPasswordEncoder passwordEncoder, final TokenProvider tokenProvider) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider;
+    }
 
 
     @Operation(summary = "회원가입", description = "회원가입 API 입니다.")

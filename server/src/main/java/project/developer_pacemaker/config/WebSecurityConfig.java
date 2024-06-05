@@ -21,8 +21,12 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
+
+    final private JwtAuthFilter jwtAuthFilter;
     @Autowired
-    JwtAuthFilter jwtAuthFilter;
+    public WebSecurityConfig(final JwtAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {

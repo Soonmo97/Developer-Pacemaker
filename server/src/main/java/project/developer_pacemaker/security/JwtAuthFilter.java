@@ -19,8 +19,12 @@ import java.io.IOException;
 @Component
 @Slf4j
 public class JwtAuthFilter extends OncePerRequestFilter {
+    final private TokenProvider tokenProvider;
+
     @Autowired
-    TokenProvider tokenProvider;
+    public JwtAuthFilter(final TokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+    }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {

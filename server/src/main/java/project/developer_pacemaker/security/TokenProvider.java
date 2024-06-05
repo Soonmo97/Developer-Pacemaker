@@ -14,9 +14,11 @@ import java.util.Date;
 
 @Component
 public class TokenProvider {
-
+    final private JwtProperties jwtProperties;
     @Autowired
-    JwtProperties jwtProperties;
+    public TokenProvider(final JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
+    }
 
     public String create(UserEntity user) {
         Date expiredDate
