@@ -40,8 +40,6 @@ public class UserService {
             throw new RuntimeException("Nickname already exists");
         }
 
-        // UserEntity 를 DB에 저장.
-        // save를 했을 때 반환되는 객체는 Entity 객체
         return userRepository.save(userEntity);
     }
 
@@ -59,6 +57,14 @@ public class UserService {
         if(user != null && passwordEncoder.matches(password, user.getPw())){
             return user;
         } else return null;
+    }
+
+    public UserEntity findByEmail(final String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public UserEntity saveAs(final UserEntity userEntity) {
+        return userRepository.save(userEntity);
     }
 
 }

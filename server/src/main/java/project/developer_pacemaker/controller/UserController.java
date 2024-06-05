@@ -67,7 +67,7 @@ public class UserController {
         return ResponseEntity.ok(isDuplicate);
     }
 
-    @Operation(summary = "이메일 중복체크", description = "이메일 중복체크 API 입니다.")
+    @Operation(summary = "이메일 중복체크", description = "이메일 중복체크(회원가입, 비밀번호 찾기) API 입니다.")
     @GetMapping("/check-email")
     public ResponseEntity<?> checkEmail(@RequestParam String email) {
         boolean isDuplicate = userService.isDuplicateEmail(email);
@@ -76,7 +76,7 @@ public class UserController {
 
     @Operation(summary = "로그인", description = "로그인 API 입니다.")
     @PostMapping("/login")
-    public  ResponseEntity<?> loginUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> loginUser(@RequestBody UserDTO userDTO) {
         UserEntity user = userService.getByCredentials(userDTO.getEmail(), userDTO.getPw());
 
         if(user != null) {
@@ -97,4 +97,18 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "비밀번호 찾기(재설정)", description = "비밀번호 찾기(재설정) API 입니다.")
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody UserDTO userDTO
+    ) {
+        UserEntity existingUser = userService.findByEmail(userDTO.getEmail());
+        if (existingUser != null) {
+            existingUser.setPw(passwordEncoder.encode(userDTO.getPw()));
+            userService.saveAs(existingUser); // 사용자 정보 저장
+
+            return ResponseEntity.ok("비밀번호가 성공적으로 재설정되었습니다.");
+        } else {
+            return ResponseEntity.badRequest().body("입력하신 이메일은 존재하지 않습니다.");
+        }
+    }
 }
