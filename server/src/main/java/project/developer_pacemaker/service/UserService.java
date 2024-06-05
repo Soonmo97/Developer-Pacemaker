@@ -2,6 +2,7 @@ package project.developer_pacemaker.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.developer_pacemaker.entity.UserEntity;
 import project.developer_pacemaker.repository.UserRepository;
@@ -10,8 +11,14 @@ import project.developer_pacemaker.repository.UserRepository;
 @Slf4j
 public class UserService {
 
+    final private UserRepository userRepository;
+    final private BCryptPasswordEncoder passwordEncoder;
+
     @Autowired
-    UserRepository userRepository;
+    public UserService(final UserRepository userRepository, final BCryptPasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public UserEntity create(final UserEntity userEntity) {
         if (userEntity == null || userEntity.getEmail() == null || userEntity.getNickname() == null ||
@@ -43,6 +50,15 @@ public class UserService {
     }
     public Boolean isDuplicateNickname(final String nickname) {
         return userRepository.existsByNickname(nickname);
+    }
+
+    public UserEntity getByCredentials(final String email, final String password) {
+
+        UserEntity user = userRepository.findByEmail(email);
+
+        if(user != null && passwordEncoder.matches(password, user.getPw())){
+            return user;
+        } else return null;
     }
 
 }

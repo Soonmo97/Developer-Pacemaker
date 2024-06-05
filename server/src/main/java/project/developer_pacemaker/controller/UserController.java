@@ -8,17 +8,23 @@ import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.ResErrorDTO;
 import project.developer_pacemaker.dto.UserDTO;
 import project.developer_pacemaker.entity.UserEntity;
+import project.developer_pacemaker.security.TokenProvider;
 import project.developer_pacemaker.service.UserService;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
 
+    final private UserService userService;
+    final private BCryptPasswordEncoder passwordEncoder;
+    final private TokenProvider tokenProvider;
     @Autowired
-    private UserService userService;
+    public UserController(final UserService userService, final BCryptPasswordEncoder passwordEncoder, final TokenProvider tokenProvider) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider;
+    }
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
 
     @Operation(summary = "회원가입", description = "회원가입 API 입니다.")
     @PostMapping()
@@ -68,5 +74,27 @@ public class UserController {
         return ResponseEntity.ok(isDuplicate);
     }
 
+    @Operation(summary = "로그인", description = "로그인 API 입니다.")
+    @PostMapping("/login")
+    public  ResponseEntity<?> loginUser(@RequestBody UserDTO userDTO) {
+        UserEntity user = userService.getByCredentials(userDTO.getEmail(), userDTO.getPw());
+
+        if(user != null) {
+            // [token 인증 방식] client 에게 jwt token 을 발급해 응답으로 전송
+            String token = tokenProvider.create(user);
+            final UserDTO responseUserDTO = UserDTO.builder()
+                .email(user.getEmail())
+                .uSeq(user.getUSeq())
+                // token 을 세팅해서 전달할 예정
+                .token(token)
+                .build();
+
+            return ResponseEntity.ok().body(responseUserDTO);
+        } else {
+            return ResponseEntity
+                .badRequest()
+                .body("login failed");
+        }
+    }
 
 }

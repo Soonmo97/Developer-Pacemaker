@@ -13,7 +13,8 @@ import lombok.*;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int uSeq;
+    @Column(name = "uSeq", updatable = false)
+    private long uSeq;
 
     @Column(name="pw", nullable = true, length = 100)
     private String pw;
