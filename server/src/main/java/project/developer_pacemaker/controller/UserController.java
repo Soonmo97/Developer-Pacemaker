@@ -54,4 +54,19 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "닉네임 중복체크", description = "닉네임 중복체크 API 입니다.")
+    @GetMapping("/check-nickname")
+    public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
+        boolean isDuplicate = userService.isDuplicateNickname(nickname);
+        return ResponseEntity.ok(isDuplicate);
+    }
+
+    @Operation(summary = "이메일 중복체크", description = "이메일 중복체크 API 입니다.")
+    @GetMapping("/check-email")
+    public ResponseEntity<?> checkEmail(@RequestParam String email) {
+        boolean isDuplicate = userService.isDuplicateEmail(email);
+        return ResponseEntity.ok(isDuplicate);
+    }
+
+
 }
