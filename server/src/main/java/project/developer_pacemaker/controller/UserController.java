@@ -24,6 +24,13 @@ public class UserController {
     @PostMapping()
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         try {
+            // 비밀번호 유효성 검사
+            if (userDTO.getPw() == null || userDTO.getPw().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                    .error("Password cannot be empty")
+                    .build());
+            }
+
             UserEntity user = UserEntity.builder()
                 .nickname(userDTO.getNickname())
                 .email(userDTO.getEmail())
