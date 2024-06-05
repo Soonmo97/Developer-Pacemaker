@@ -14,12 +14,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import project.developer_pacemaker.security.JwtAuthFilter;
 
 import java.util.Arrays;
 
 @Configuration
-@EnableWebSecurity // 해당 클래스에서 spring security 를 사용하기 위한 어노테이션
+@EnableWebSecurity
 public class WebSecurityConfig {
+
+    final private JwtAuthFilter jwtAuthFilter;
+    @Autowired
+    public WebSecurityConfig(final JwtAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -34,11 +41,11 @@ public class WebSecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/user/**", "/api/gpt/ask").permitAll()
+                .requestMatchers("/api/user/**", "/swagger-ui/**", "/v3/**").permitAll()
                 .anyRequest().authenticated()
             );
 
-//        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

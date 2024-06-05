@@ -11,4 +11,6 @@ public class UserDTO {
     private String pw;
     private String img;
     private String social;
+    private String token;
+    private long uSeq;
 }
