@@ -18,7 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Configuration
-@EnableWebSecurity // 해당 클래스에서 spring security 를 사용하기 위한 어노테이션
+@EnableWebSecurity
 public class WebSecurityConfig {
 
     @Bean
@@ -34,7 +34,7 @@ public class WebSecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/user/**").permitAll()
+                .requestMatchers("/api/user/**", "/swagger-ui/**", "/v3/**").permitAll()
                 .anyRequest().authenticated()
             );
 
