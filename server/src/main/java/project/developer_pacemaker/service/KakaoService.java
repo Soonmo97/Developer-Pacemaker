@@ -1,5 +1,6 @@
 package project.developer_pacemaker.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -8,44 +9,82 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import project.developer_pacemaker.config.social.KakaoProperties;
 import project.developer_pacemaker.dto.UserDTO;
 import project.developer_pacemaker.entity.UserEntity;
 import project.developer_pacemaker.repository.UserRepository;
+import project.developer_pacemaker.security.TokenProvider;
 
 @Service
+@Slf4j
 public class KakaoService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private TokenProvider tokenProvider;
+    @Autowired
+    private KakaoProperties kakaoProperties;
 
     private final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
-    private final String CLIENT_ID = "f245ad8d67e4be9d6c3e5c20f1f8d0a4"; // application.properties? secret.properites?
-    private final String REDIRECT_URI = "http://localhost:8080/login/oauth2/code/kakao"; // application.properties? secret.properites?
 
+    // 기존 kakaoLogin 메서드 (OAuth 인증 코드로 로그인)
     public UserDTO kakaoLogin(String code){
         String accessToken = getAccessToken(code);
+        return processKakaoLogin(accessToken);
+    }
+
+    // 새로운 kakaoLoginWithAccessToken 메서드 (액세스 토큰으로 로그인)
+    public UserDTO kakaoLoginWithAccessToken(String accessToken){
+        return processKakaoLogin(accessToken);
+    }
+
+    // 공통된 로그인 처리 로직을 메서드로 분리
+    private UserDTO processKakaoLogin(String accessToken) {
         UserDTO kakaoUser = getKakaoUserInfo(accessToken);
 
+        UserEntity userEntity;
         if(!userRepository.existsByNickname(kakaoUser.getNickname())) {
-            UserEntity userEntity = UserEntity.builder()
-                    .email("kakaoLogin")
+            userEntity = UserEntity.builder()
+                    .email("kakaoLoginUser")
                     .nickname(kakaoUser.getNickname())
                     .pw(null)
                     .img(null) //  이미지 경로로 수정해야함
                     .social("true")
                     .build();
             userRepository.save(userEntity);
+        } else {
+            userEntity = userRepository.findByNickname(kakaoUser.getNickname());
         }
-        return kakaoUser;
+
+        // JWT 토큰 생성
+        String token = tokenProvider.create(userEntity);
+        return UserDTO.builder()
+                .email(userEntity.getEmail())
+                .nickname(userEntity.getNickname())
+                .uSeq(userEntity.getUSeq())
+                .token(token)
+                .build();
     }
+
+    // 엑세스 토큰 가져오기
     private String getAccessToken(String code){
         RestTemplate restTemplate = new RestTemplate();
-        String requestUrl = KAKAO_TOKEN_URL + "?grant_type=authorization_code&client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URI + "&code=" + code;
-        String response = restTemplate.postForObject(requestUrl, null, String.class);
+        String requestUrl = KAKAO_TOKEN_URL + "?grant_type=authorization_code&client_id=" + kakaoProperties.getClientId() + "&redirect_uri=" + kakaoProperties.getRedirectUri() + "&code=" + code;
+
+        String response;
+        try {
+            response = restTemplate.postForObject(requestUrl, null, String.class);
+            log.info("Access Token Response: {}", response);
+        } catch (Exception e) {
+            log.error("카카오로부터 엑세스 토큰을 발급하는데 실패했습니다.", e);
+            throw new RuntimeException("카카오로부터 엑세스 토큰을 발급하는데 실패했습니다.");
+        }
         JSONObject jsonObject = new JSONObject(response);
         return jsonObject.getString("access_token");
     }
 
+    // 카카오 사용자 정보 가져오기
     private UserDTO getKakaoUserInfo(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         String requestUrl = KAKAO_USER_INFO_URL;
@@ -58,11 +97,11 @@ public class KakaoService {
         JSONObject kakaoAccount = jsonObject.getJSONObject("kakao_account");
 
         return UserDTO.builder()
-                .email("kakao")
+                .email("kakao") // 여기서 실제 이메일 정보를 반영할 수 있습니다.
                 .nickname(kakaoAccount.getJSONObject("profile").getString("nickname"))
                 .pw(null)
                 .img(null)
-                .social(("true"))
+                .social("true")
                 .build();
     }
 }

@@ -8,6 +8,8 @@ import project.developer_pacemaker.entity.UserEntity;
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     UserEntity findByEmail(String email);
 
+    UserEntity findByNickname(String nickname);
+
     Boolean existsByEmail(String email);
 
     Boolean existsByNickname(String nickname);
