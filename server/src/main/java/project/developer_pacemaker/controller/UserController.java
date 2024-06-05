@@ -24,6 +24,13 @@ public class UserController {
     @PostMapping()
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         try {
+            // 비밀번호 유효성 검사
+            if (userDTO.getPw() == null || userDTO.getPw().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                    .error("Password cannot be empty")
+                    .build());
+            }
+
             UserEntity user = UserEntity.builder()
                 .nickname(userDTO.getNickname())
                 .email(userDTO.getEmail())
@@ -46,5 +53,20 @@ public class UserController {
             );
         }
     }
+
+    @Operation(summary = "닉네임 중복체크", description = "닉네임 중복체크 API 입니다.")
+    @GetMapping("/check-nickname")
+    public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
+        boolean isDuplicate = userService.isDuplicateNickname(nickname);
+        return ResponseEntity.ok(isDuplicate);
+    }
+
+    @Operation(summary = "이메일 중복체크", description = "이메일 중복체크 API 입니다.")
+    @GetMapping("/check-email")
+    public ResponseEntity<?> checkEmail(@RequestParam String email) {
+        boolean isDuplicate = userService.isDuplicateEmail(email);
+        return ResponseEntity.ok(isDuplicate);
+    }
+
 
 }

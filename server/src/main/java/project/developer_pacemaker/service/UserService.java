@@ -38,4 +38,11 @@ public class UserService {
         return userRepository.save(userEntity);
     }
 
+    public Boolean isDuplicateEmail(final String email) {
+        return userRepository.existsByEmail(email);
+    }
+    public Boolean isDuplicateNickname(final String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
+
 }
