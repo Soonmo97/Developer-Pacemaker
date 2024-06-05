@@ -5,8 +5,10 @@ import org.springframework.stereotype.Repository;
 import project.developer_pacemaker.entity.UserEntity;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Integer> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findByEmail(String email);
+
+//    UserEntity findByUSeq(Long uSeq);
 
     Boolean existsByEmail(String email);
 

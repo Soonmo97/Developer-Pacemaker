@@ -67,4 +67,9 @@ public class UserService {
         return userRepository.save(userEntity);
     }
 
+    public UserEntity findByUSeq(final String uSeq) {
+        Long uSeqLong = Long.parseLong(uSeq);
+        return userRepository.findById(uSeqLong).orElseThrow(()->new RuntimeException("RuntimeException"));
+    }
+
 }
