@@ -34,7 +34,7 @@ public class TokenProvider {
     }
 
     // 입력된 token 에서 payload 에 있는 userId 뽑기
-    public String validateAndGetUserId(String token) {
+    public String validateAndGetUSeq(String token) {
         Claims claims = Jwts.parser()
             .setSigningKey(jwtProperties.getSecretKey())
             .parseClaimsJws(token) // 토큰이 위조되지 않았다면 payload 를 return
