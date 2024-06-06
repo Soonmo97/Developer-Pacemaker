@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 import project.developer_pacemaker.dto.UserDTO;
 import project.developer_pacemaker.service.KakaoService;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/kakao")
-
 public class KakaoLoginController {
+
     @Autowired
     private KakaoService kakaoService;
 
+    @Operation(summary = "카카오 로그인", description = "카카오 로그인 API 입니다.")
     @GetMapping("/kakaoLogin")
-    public UserDTO login(@RequestParam String code) {
-        return kakaoService.kakaoLogin(code);
+    public UserDTO login(@RequestParam String accessToken) {
+//        return kakaoService.kakaoLogin(accessToken);
+        return kakaoService.kakaoLoginWithAccessToken(accessToken);
     }
 }
