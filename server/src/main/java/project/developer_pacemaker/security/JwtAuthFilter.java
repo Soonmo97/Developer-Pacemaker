@@ -27,11 +27,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        // 카카오 로그인 경로는 필터링하지 않음
-//        if (request.getRequestURI().startsWith("/api/kakao")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
         try {
             // (1) 요청의 Header 에 담겨온 token 을 뽑아서 유효한지 확인
             String token = parseBearerToken(request);

@@ -18,24 +18,27 @@ import project.developer_pacemaker.security.TokenProvider;
 @Service
 @Slf4j
 public class KakaoService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TokenProvider tokenProvider;
-    @Autowired
-    private KakaoProperties kakaoProperties;
+    private final UserRepository userRepository;
+    private final TokenProvider tokenProvider;
+    private final KakaoProperties kakaoProperties;
 
     private final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
 
-    // 기존 kakaoLogin 메서드 (OAuth 인증 코드로 로그인)
-    public UserDTO kakaoLogin(String code){
+    @Autowired
+    public KakaoService(UserRepository userRepository, TokenProvider tokenProvider, KakaoProperties kakaoProperties) {
+        this.userRepository = userRepository;
+        this.tokenProvider = tokenProvider;
+        this.kakaoProperties = kakaoProperties;
+    }
+
+    public UserDTO kakaoLogin(String code) {
         String accessToken = getAccessToken(code);
         return processKakaoLogin(accessToken);
     }
 
-    // 새로운 kakaoLoginWithAccessToken 메서드 (액세스 토큰으로 로그인)
-    public UserDTO kakaoLoginWithAccessToken(String accessToken){
+    // 카카오에서 발급 받은 액세스 토큰으로 로그인
+    public UserDTO kakaoLoginWithAccessToken(String accessToken) {
         return processKakaoLogin(accessToken);
     }
 
@@ -44,12 +47,12 @@ public class KakaoService {
         UserDTO kakaoUser = getKakaoUserInfo(accessToken);
 
         UserEntity userEntity;
-        if(!userRepository.existsByNickname(kakaoUser.getNickname())) {
+        if (!userRepository.existsByNickname(kakaoUser.getNickname())) {
             userEntity = UserEntity.builder()
                     .email("kakaoLoginUser")
                     .nickname(kakaoUser.getNickname())
                     .pw(null)
-                    .img(null) //  이미지 경로로 수정해야함
+                    .img(null) // 이미지 경로로 수정해야함
                     .social("true")
                     .build();
             userRepository.save(userEntity);
@@ -68,7 +71,7 @@ public class KakaoService {
     }
 
     // 엑세스 토큰 가져오기
-    private String getAccessToken(String code){
+    private String getAccessToken(String code) {
         RestTemplate restTemplate = new RestTemplate();
         String requestUrl = KAKAO_TOKEN_URL + "?grant_type=authorization_code&client_id=" + kakaoProperties.getClientId() + "&redirect_uri=" + kakaoProperties.getRedirectUri() + "&code=" + code;
 
@@ -97,7 +100,7 @@ public class KakaoService {
         JSONObject kakaoAccount = jsonObject.getJSONObject("kakao_account");
 
         return UserDTO.builder()
-                .email("kakao") // 여기서 실제 이메일 정보를 반영할 수 있습니다.
+                .email("kakao") // 실제 이메일 정보를 반영할 수 있습니다.
                 .nickname(kakaoAccount.getJSONObject("profile").getString("nickname"))
                 .pw(null)
                 .img(null)
