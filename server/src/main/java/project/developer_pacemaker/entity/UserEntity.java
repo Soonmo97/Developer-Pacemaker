@@ -1,6 +1,7 @@
 package project.developer_pacemaker.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -46,5 +47,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     @JsonBackReference
     private List<GptEntity> gptEntities;
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private List<StudyGroupEntity> studyGroups;
 }
 
