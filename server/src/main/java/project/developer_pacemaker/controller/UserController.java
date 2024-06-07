@@ -26,7 +26,6 @@ public class UserController {
         this.tokenProvider = tokenProvider;
     }
 
-
     @Operation(summary = "회원가입", description = "회원가입 API 입니다.")
     @PostMapping()
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
@@ -157,6 +156,52 @@ public class UserController {
                 .error(e.getMessage())
                 .build()
             );
+        }
+    }
+
+    @Operation(summary = "마이페이지 닉네임 변경", description = "마이페이지 닉네임 변경 API 입니다.")
+    @PatchMapping("/nickname")
+    public ResponseEntity<?> patchNickname(@AuthenticationPrincipal String uSeq,
+                                           @RequestBody String newNickname) {
+        try {
+            UserEntity updateUser = userService.updateNickname(uSeq, newNickname);
+            UserDTO userDTO = UserDTO.builder()
+                .email(updateUser.getEmail())
+                .img(updateUser.getImg())
+                .nickname(updateUser.getNickname())
+                .social(updateUser.getSocial())
+                .build();
+
+            return ResponseEntity.ok(userDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+    }
+
+    @Operation(summary = "마이페이지 비밀번호 변경(재설정)", description = "마이페이지 비밀번호 변경(재설정) API 입니다.")
+    @PatchMapping("/password")
+    public ResponseEntity<String> resetPassword(@AuthenticationPrincipal String uSeq,
+                                                @RequestBody String newPw
+    ) {
+        try {
+            String result = userService.updatePw(uSeq, newPw);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "마이페이지 회원탈퇴", description = "마이페이지 회원탈퇴 API 입니다.")
+    @DeleteMapping("")
+    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal String uSeq) {
+        try {
+            String result = userService.deleteUser(uSeq);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
