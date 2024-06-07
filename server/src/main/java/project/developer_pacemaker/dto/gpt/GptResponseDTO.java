@@ -2,13 +2,12 @@ package project.developer_pacemaker.dto.gpt;
 
 import lombok.*;
 
-import java.awt.*;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GptResponse {
+public class GptResponseDTO {
     private List<Choice> choices;
 
     @Data
@@ -16,7 +15,7 @@ public class GptResponse {
     @AllArgsConstructor
     public static class Choice {
         private int index;
-        private Message message;
+        private MessageDTO message;
 
     }
 }
