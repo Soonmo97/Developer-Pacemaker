@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class GptRequest {
+public class GptRequestDTO {
     private String model;
-    private List<Message> messages;
+    private List<MessageDTO> messages;
 
-    public GptRequest(String model, String prompt) {
+    public GptRequestDTO(String model, String prompt) {
         this.model = model;
         this.messages =  new ArrayList<>();
-        this.messages.add(new Message("user", prompt));
+        this.messages.add(new MessageDTO("user", prompt));
     }
 
 }

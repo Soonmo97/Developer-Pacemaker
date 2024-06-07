@@ -1,7 +1,10 @@
 package project.developer_pacemaker.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -30,5 +33,9 @@ public class UserEntity {
 
     @Column(name="social", nullable = true, length = 20)
     private String social;
+
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    private List<GptEntity> gptEntities;
 }
 
