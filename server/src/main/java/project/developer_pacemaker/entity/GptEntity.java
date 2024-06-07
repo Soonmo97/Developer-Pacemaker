@@ -1,14 +1,12 @@
 package project.developer_pacemaker.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name="gpt")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +16,7 @@ public class GptEntity {
     @Column(name = "gSeq")
     private long gSeq;
     @ManyToOne
-    @JoinColumn(name="uSeq", nullable = false)
+    @JoinColumn(name="uSeq",  referencedColumnName = "uSeq", nullable = false)
     private UserEntity user;
 
     @Column(name="question", nullable = false, columnDefinition = "TEXT")
@@ -26,4 +24,8 @@ public class GptEntity {
 
     @Column(name="answer", nullable = false, columnDefinition = "TEXT")
     private String answer;
+
+    @Column(name="isDeleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean isDeleted = false;
+
 }

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -38,10 +39,36 @@ public class GptController {
         return chatGPTResponse.getChoices().get(0).getMessage().getContent();
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<?> getMyGptList(@RequestParam String nickname){
-        // 임시로 닉네임
-        List<GptDTO> gptList = gptService.getGpt(nickname);
+    @GetMapping()
+    public ResponseEntity<?> getMyGptList(@AuthenticationPrincipal String uSeq){
+        Long uSeqLong = Long.parseLong(uSeq);
+        List<GptDTO> gptList = gptService.getGptListByUSeq(uSeqLong);
         return new ResponseEntity<>(gptList, HttpStatus.OK);
     }
+
+    @PostMapping()
+    public ResponseEntity<String> saveGpt(@AuthenticationPrincipal String uSeq, @RequestBody GptDTO gptDto){
+        Long uSeqLong = Long.parseLong(uSeq);
+        gptService.saveGpt(uSeqLong, gptDto);
+
+        return new ResponseEntity<>("Gpt question and answer saved successfully", HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{gSeq}")
+    public ResponseEntity<?> deleteGpt(@PathVariable("gSeq") long gSeq) {
+        boolean deleted = gptService.deleteGptByGSeq(gSeq);
+        if (deleted) {
+            return ResponseEntity.ok("Deletion successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to delete gpt data");
+        }
+    }
+
+    @GetMapping("/deleted")
+    public ResponseEntity<?> getDeletedGptList(@AuthenticationPrincipal String uSeq){
+        Long uSeqLong = Long.parseLong(uSeq);
+        List<GptDTO> gptList = gptService.getDeletedGptListByUser(uSeqLong);
+        return new ResponseEntity<>(gptList, HttpStatus.OK);
+    }
+
 }
