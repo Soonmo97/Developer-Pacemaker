@@ -72,4 +72,30 @@ public class UserService {
         return userRepository.findById(uSeqLong).orElseThrow(()->new RuntimeException("RuntimeException"));
     }
 
+    public String deleteUser(final String uSeq) {
+        Long uSeqLong = Long.parseLong(uSeq);
+        userRepository.deleteById(uSeqLong);
+        return "회원탈퇴 되었습니다.";
+    }
+
+    public UserEntity updateNickname(final String uSeq, String newNickname) {
+        Long uSeqLong = Long.parseLong(uSeq);
+        UserEntity user = userRepository.findById(uSeqLong).orElseThrow(()->new RuntimeException("RuntimeException"));
+        if (user != null) {
+            user.setNickname(newNickname);
+            return userRepository.save(user);
+        }
+        return null;
+    }
+
+    public String updatePw(final String uSeq, String newPw) {
+        Long uSeqLong = Long.parseLong(uSeq);
+        UserEntity user = userRepository.findById(uSeqLong).orElseThrow(()->new RuntimeException("RuntimeException"));
+        if (user != null) {
+            user.setPw(passwordEncoder.encode(newPw));
+            userRepository.save(user);
+            return "비밀번호 변경완료";
+        }
+        return "존재하지 않는 사용자입니다.";
+    }
 }
