@@ -9,5 +9,8 @@ import java.util.List;
 
 @Repository
 public interface GptRepository extends JpaRepository<GptEntity, Long> {
-    List<GptEntity> findByUser(UserEntity user);
+    List<GptEntity> findByUser_uSeq(long uSeq);
+
+
+    List<GptEntity> findByUser_uSeqAndIsDeleted(long uSeq, boolean isDeleted);
 }
