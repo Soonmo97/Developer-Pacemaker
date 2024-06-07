@@ -38,10 +38,10 @@ public class GptController {
         return chatGPTResponse.getChoices().get(0).getMessage().getContent();
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<?> getMyGptList(@RequestParam String nickname){
-        // 임시로 닉네임
-        List<GptDTO> gptList = gptService.getGpt(nickname);
-        return new ResponseEntity<>(gptList, HttpStatus.OK);
-    }
+//    @GetMapping("/list")
+//    public ResponseEntity<?> getMyGptList(@RequestParam String nickname){
+//        // 임시로 닉네임
+//        List<GptDTO> gptList = gptService.getGpt(nickname);
+//        return new ResponseEntity<>(gptList, HttpStatus.OK);
+//    }
 }
