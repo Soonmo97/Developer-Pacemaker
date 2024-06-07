@@ -3,11 +3,10 @@ package project.developer_pacemaker.service;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import project.developer_pacemaker.config.social.KakaoProperties;
 import project.developer_pacemaker.dto.UserDTO;
@@ -33,14 +32,15 @@ public class KakaoService {
     }
 
     public UserDTO kakaoLogin(String code) {
+        log.warn("kakaoLogin {}", code);
         String accessToken = getAccessToken(code);
         return processKakaoLogin(accessToken);
     }
 
-    // 카카오에서 발급 받은 액세스 토큰으로 로그인
-    public UserDTO kakaoLoginWithAccessToken(String accessToken) {
-        return processKakaoLogin(accessToken);
-    }
+//    // 카카오에서 발급 받은 액세스 토큰으로 로그인
+//    public UserDTO kakaoLoginWithAccessToken(String accessToken) {
+//        return processKakaoLogin(accessToken);
+//    }
 
     // 공통된 로그인 처리 로직을 메서드로 분리
     private UserDTO processKakaoLogin(String accessToken) {
@@ -49,7 +49,7 @@ public class KakaoService {
         UserEntity userEntity;
         if (!userRepository.existsByNickname(kakaoUser.getNickname())) {
             userEntity = UserEntity.builder()
-                    .email("kakaoLoginUser")
+                    .email(kakaoUser.getEmail())
                     .nickname(kakaoUser.getNickname())
                     .pw(null)
                     .img(null) // 이미지 경로로 수정해야함
@@ -59,6 +59,8 @@ public class KakaoService {
         } else {
             userEntity = userRepository.findByNickname(kakaoUser.getNickname());
         }
+
+        log.warn("userEntity {}", userEntity.getNickname());
 
         // JWT 토큰 생성
         String token = tokenProvider.create(userEntity);
@@ -72,15 +74,25 @@ public class KakaoService {
 
     // 엑세스 토큰 가져오기
     private String getAccessToken(String code) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", kakaoProperties.getClientId());
+        params.add("redirect_uri", kakaoProperties.getRedirectUri());
+        params.add("code", code);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
         RestTemplate restTemplate = new RestTemplate();
-        String requestUrl = KAKAO_TOKEN_URL + "?grant_type=authorization_code&client_id=" + kakaoProperties.getClientId() + "&redirect_uri=" + kakaoProperties.getRedirectUri() + "&code=" + code;
 
         String response;
         try {
-            response = restTemplate.postForObject(requestUrl, null, String.class);
+            response = restTemplate.postForObject(KAKAO_TOKEN_URL, request, String.class);
             log.info("Access Token Response: {}", response);
         } catch (Exception e) {
-            log.error("카카오로부터 엑세스 토큰을 발급하는데 실패했습니다.", e);
+            log.error("error kakao login 카카오로부터 엑세스 토큰을 발급하는데 실패했습니다.", e);
             throw new RuntimeException("카카오로부터 엑세스 토큰을 발급하는데 실패했습니다.");
         }
         JSONObject jsonObject = new JSONObject(response);
@@ -94,13 +106,14 @@ public class KakaoService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-
+        log.warn("getKakaoUserInfo 1 {}", accessToken);
         ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.GET, entity, String.class);
         JSONObject jsonObject = new JSONObject(response.getBody());
         JSONObject kakaoAccount = jsonObject.getJSONObject("kakao_account");
-
+        log.warn("getKakaoUserInfo 2 {}", jsonObject.getJSONObject("kakao_account"));
+        log.warn("getKakaoUserInfo 3 {}", kakaoAccount.getString("email"));
         return UserDTO.builder()
-                .email("kakao") // 실제 이메일 정보를 반영할 수 있습니다.
+                .email(kakaoAccount.getString("email"))
                 .nickname(kakaoAccount.getJSONObject("profile").getString("nickname"))
                 .pw(null)
                 .img(null)
