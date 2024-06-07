@@ -1,10 +1,13 @@
 package project.developer_pacemaker.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.util.List;
 
 @Entity
 @SQLDelete(sql = "UPDATE user SET is_deleted = 1 WHERE u_seq = ?") // jpa delete 를 실행시킬 경우 해당 sql 문 실행
@@ -40,5 +43,8 @@ public class UserEntity {
     @ColumnDefault("false")
     private boolean isDeleted;
 
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    private List<GptEntity> gptEntities;
 }
 
