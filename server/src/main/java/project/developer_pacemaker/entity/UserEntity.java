@@ -46,5 +46,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     @JsonBackReference
     private List<GptEntity> gptEntities;
+
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    private List<ReportEntity> reportEntities;
 }
 

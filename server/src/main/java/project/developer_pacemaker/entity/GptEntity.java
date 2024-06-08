@@ -26,6 +26,6 @@ public class GptEntity {
     private String answer;
 
     @Column(name="isDeleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
-    private boolean isDeleted = false;
+    private boolean isDeleted;
 
 }
