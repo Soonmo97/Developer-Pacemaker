@@ -18,8 +18,7 @@ public class KakaoLoginController {
 
     @Operation(summary = "카카오 로그인", description = "카카오 로그인 API 입니다.")
     @GetMapping("/kakaoLogin")
-    public UserDTO login(@RequestParam String accessToken) {
-//        return kakaoService.kakaoLogin(accessToken);
-        return kakaoService.kakaoLoginWithAccessToken(accessToken);
+    public UserDTO login(@RequestParam String code) {
+        return kakaoService.kakaoLogin(code);
     }
 }
