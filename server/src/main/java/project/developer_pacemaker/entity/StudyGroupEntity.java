@@ -2,6 +2,7 @@ package project.developer_pacemaker.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @SQLDelete(sql = "UPDATE studyGroup SET is_deleted = 1 WHERE u_seq = ?") // jpa delete 를 실행시킬 경우 해당 sql 문 실행
@@ -53,4 +55,7 @@ public class StudyGroupEntity {
     @JsonBackReference
     private UserEntity user;
 
+    @OneToMany(mappedBy = "studyGroup")
+    @JsonManagedReference
+    private List<RecruitmentBoardEntity> recruitmentBoards;
 }
