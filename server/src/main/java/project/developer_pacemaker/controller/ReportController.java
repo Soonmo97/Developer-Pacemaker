@@ -20,10 +20,15 @@ public class ReportController {
 
     @GetMapping()
     public ResponseEntity<?> getMyReport(@AuthenticationPrincipal String uSeq){
-        Long uSeqLong = Long.parseLong(uSeq);
-        List<ReportDTO> reportList = reportService.getReportListByuSeq(uSeqLong);
+        try{
+            Long uSeqLong = Long.parseLong(uSeq);
+            List<ReportDTO> reportList = reportService.getReportListByuSeq(uSeqLong);
 
-        return new ResponseEntity<>(reportList, HttpStatus.OK);
+            return new ResponseEntity<>(reportList, HttpStatus.OK);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to load report data");
+        }
+
     }
 
     @PostMapping()

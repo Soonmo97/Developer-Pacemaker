@@ -38,7 +38,6 @@ public class ReportService {
         reportEntity.setTitle(report.getTitle());
         reportEntity.setContent(report.getContent());
 
-
         UserEntity userEntity = new UserEntity();
         userEntity.setUSeq(uSeq);
 
@@ -50,7 +49,7 @@ public class ReportService {
     public boolean updateReportByrSeq(long rSeq, long currentUSeq, ReportCreateDTO report) {
         try{
             Optional<ReportEntity> reportEntityOptional  = reportRepository.findById(rSeq);
-            if(reportEntityOptional .isPresent()){
+            if(reportEntityOptional.isPresent()){
                 ReportEntity reportEntity = reportEntityOptional.get();
                 // 현재 로그인한 사용자의 레포트만 수정 가능
                 if(reportEntity.getUser().getUSeq()!=currentUSeq){
