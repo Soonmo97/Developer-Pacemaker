@@ -13,7 +13,7 @@ import org.springframework.data.annotation.CreatedDate;
 import java.util.Date;
 
 @Entity
-@SQLDelete(sql = "UPDATE studyGroup SET is_deleted = 1 WHERE u_seq = ?") // jpa delete 를 실행시킬 경우 해당 sql 문 실행
+@SQLDelete(sql = "UPDATE study_Group SET is_deleted = 1 WHERE sg_seq = ?") // jpa delete 를 실행시킬 경우 해당 sql 문 실행
 @SQLRestriction("is_deleted = 0") // 해당 엔티티의 기본 쿼리에 디폴트로 where 조건을 적용하는 어노테이션
 @Table(name = "studyGroup")
 @Getter
@@ -35,7 +35,8 @@ public class StudyGroupEntity {
     private String registered;
 
     @Column(name="max", nullable = false)
-    private int max;
+    @ColumnDefault("15")
+    private final int max = 15;
 
     @Column(name="current", nullable = true)
     private int current;

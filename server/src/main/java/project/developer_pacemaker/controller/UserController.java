@@ -162,17 +162,17 @@ public class UserController {
     @Operation(summary = "마이페이지 닉네임 변경", description = "마이페이지 닉네임 변경 API 입니다.")
     @PatchMapping("/nickname")
     public ResponseEntity<?> patchNickname(@AuthenticationPrincipal String uSeq,
-                                           @RequestBody String newNickname) {
+                                           @RequestBody UserDTO userDTO) {
         try {
-            UserEntity updateUser = userService.updateNickname(uSeq, newNickname);
-            UserDTO userDTO = UserDTO.builder()
+            UserEntity updateUser = userService.updateNickname(uSeq, userDTO.getNickname());
+            UserDTO updateUserDTO = UserDTO.builder()
                 .email(updateUser.getEmail())
                 .img(updateUser.getImg())
                 .nickname(updateUser.getNickname())
                 .social(updateUser.getSocial())
                 .build();
 
-            return ResponseEntity.ok(userDTO);
+            return ResponseEntity.ok(updateUserDTO);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ResErrorDTO.builder()
                 .error(e.getMessage())
@@ -184,10 +184,10 @@ public class UserController {
     @Operation(summary = "마이페이지 비밀번호 변경(재설정)", description = "마이페이지 비밀번호 변경(재설정) API 입니다.")
     @PatchMapping("/password")
     public ResponseEntity<String> resetPassword(@AuthenticationPrincipal String uSeq,
-                                                @RequestBody String newPw
+                                                @RequestBody UserDTO userDTO
     ) {
         try {
-            String result = userService.updatePw(uSeq, newPw);
+            String result = userService.updatePw(uSeq, userDTO.getPw());
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -195,7 +195,7 @@ public class UserController {
     }
 
     @Operation(summary = "마이페이지 회원탈퇴", description = "마이페이지 회원탈퇴 API 입니다.")
-    @DeleteMapping("")
+    @DeleteMapping()
     public ResponseEntity<String> deleteUser(@AuthenticationPrincipal String uSeq) {
         try {
             String result = userService.deleteUser(uSeq);
