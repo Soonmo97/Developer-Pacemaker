@@ -1,5 +1,6 @@
 package project.developer_pacemaker.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,7 +27,7 @@ public class RecruitmentBoardEntity {
 
     @ManyToOne
     @JoinColumn(name = "sgSeq", updatable = false)
-    @JsonManagedReference
+    @JsonBackReference
     private StudyGroupEntity studyGroup;
 
     @CreationTimestamp
