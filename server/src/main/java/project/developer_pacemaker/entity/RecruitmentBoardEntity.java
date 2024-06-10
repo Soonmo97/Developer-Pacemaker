@@ -21,17 +21,17 @@ public class RecruitmentBoardEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rb_seq", updatable = false)
-    private long rb_seq;
+    @Column(name = "rbSeq", updatable = false)
+    private long rbSeq;
 
     @ManyToOne
-    @Column(name = "sgSeq", updatable = false)
+    @JoinColumn(name = "sgSeq", updatable = false)
     @JsonManagedReference
     private StudyGroupEntity studyGroup;
 
     @CreationTimestamp
-    @Column(name = "createdDate", nullable = false, updatable = false)
-    private Data createdDate;
+    @Column(name = "registered", nullable = false)
+    private String registered;
 
     @Column(name = "content", nullable = false, length = 30)
     private String content;
