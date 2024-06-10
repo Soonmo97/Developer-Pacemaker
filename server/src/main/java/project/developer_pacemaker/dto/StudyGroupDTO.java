@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class StudyGroupDTO {
+    private long sgSeq;
     private String name;
     private int max;
     private long uSeq;

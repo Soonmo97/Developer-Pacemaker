@@ -1,34 +1,28 @@
 package project.developer_pacemaker.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.util.List;
+
 @Entity
-@Table(name="report")
+@Table(name = "planner")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReportEntity {
+public class PlannerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rSeq")
-    private long rSeq;
+    @Column(name = "pSeq")
+    private long pSeq;
 
     @ManyToOne
     @JoinColumn(name = "uSeq", referencedColumnName = "uSeq", nullable = false)
     private UserEntity user;
-
-    @Column(name = "title", nullable = false, length = 50)
-    private String title;
-
-    @Column(name = "content", nullable = false, length = 255)
-    private String content;
-
-    @Column(name = "totalDuration", nullable = false, columnDefinition = "FLOAT DEFAULT 0")
-    private Float totalDuration;
 
     @CreationTimestamp
     @Column(name = "registered", nullable = false)
@@ -36,4 +30,8 @@ public class ReportEntity {
 
     @Column(name = "isDeleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private boolean isDeleted;
+
+    @OneToMany(mappedBy = "planner")
+    @JsonBackReference
+    private List<TodoEntity> todoEntities;
 }
