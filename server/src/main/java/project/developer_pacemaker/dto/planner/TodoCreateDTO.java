@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlannerCreateDTO {
-    private List<TodoCreateDTO> todoCreateDTOList;
+public class TodoCreateDTO {
+    private String content;
+    private Float duration;
+    private Boolean isCompleted;
 }

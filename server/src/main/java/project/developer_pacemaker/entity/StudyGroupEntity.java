@@ -57,6 +57,9 @@ public class StudyGroupEntity {
 
     @OneToMany(mappedBy = "studyGroup")
     @JsonBackReference
+    private List<JoinRequestEntity> joinRequestEntityList;
+
     private List<GroupMembersEntity> groupMembers;
+
 
 }
