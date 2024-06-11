@@ -1,6 +1,7 @@
 package project.developer_pacemaker.service;
 
 import org.springframework.stereotype.Service;
+import project.developer_pacemaker.dto.planner.TodoCreateDTO;
 import project.developer_pacemaker.dto.planner.TodoDTO;
 import project.developer_pacemaker.entity.ArchivedTodoEntity;
 import project.developer_pacemaker.entity.PlannerEntity;
@@ -35,13 +36,13 @@ public class TodoService {
             }
             List<TodoEntity> todoEntities = todoRepository.findByPlanner(plannerEntity);
             return todoEntities.stream()
-                    .map(todo -> new TodoDTO(todo.getContent(), todo.getDuration(), todo.isCompleted()))
+                    .map(todo -> new TodoDTO(todo.getTSeq(),todo.getContent(), todo.getDuration(), todo.isCompleted()))
                     .collect(Collectors.toList());
         }
         return null;
     }
 
-    public boolean saveTodo(Long currentUSeq, long pSeq, TodoDTO todo) {
+    public boolean saveTodo(Long currentUSeq, long pSeq, TodoCreateDTO todo) {
         Optional<PlannerEntity> plannerEntityOptional = plannerRepository.findBypSeqAndIsDeletedFalse(pSeq);
 
         if(plannerEntityOptional.isPresent()){

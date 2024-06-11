@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import project.developer_pacemaker.dto.planner.TodoCreateDTO;
 import project.developer_pacemaker.dto.planner.TodoDTO;
 import project.developer_pacemaker.service.TodoService;
 
@@ -28,7 +29,7 @@ public class TodoController {
     }
 
     @PostMapping("/{pSeq}")
-    public ResponseEntity<String> saveTodo(@AuthenticationPrincipal String uSeq, @PathVariable long pSeq, @RequestBody TodoDTO todo){
+    public ResponseEntity<String> saveTodo(@AuthenticationPrincipal String uSeq, @PathVariable long pSeq, @RequestBody TodoCreateDTO todo){
         try {
             Long uSeqLong = Long.parseLong(uSeq);
             boolean save = todoService.saveTodo(uSeqLong, pSeq, todo );

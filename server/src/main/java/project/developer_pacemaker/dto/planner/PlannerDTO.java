@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlannerDTO {
+    private long pSeq;
     private String registered;
     private List<TodoDTO> todoDTOList;
 }

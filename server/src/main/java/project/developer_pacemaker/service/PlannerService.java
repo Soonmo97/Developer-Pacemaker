@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.developer_pacemaker.dto.planner.PlannerCreateDTO;
 import project.developer_pacemaker.dto.planner.PlannerDTO;
+import project.developer_pacemaker.dto.planner.TodoCreateDTO;
 import project.developer_pacemaker.dto.planner.TodoDTO;
 import project.developer_pacemaker.entity.ArchivedTodoEntity;
 import project.developer_pacemaker.entity.PlannerEntity;
@@ -40,9 +41,10 @@ public class PlannerService {
         List<PlannerEntity> plannerEntities = plannerRepository.findByUser_uSeqAndIsDeleted(uSeq, false, sort);
         return plannerEntities.stream()
                 .map(planner -> new PlannerDTO(
+                        planner.getPSeq(),
                         planner.getRegistered(),
                         planner.getTodoEntities().stream()
-                                .map(todo -> new TodoDTO(todo.getContent(), todo.getDuration(), todo.isCompleted()))
+                                .map(todo -> new TodoDTO(todo.getTSeq(),todo.getContent(), todo.getDuration(), todo.isCompleted()))
                                 .collect(Collectors.toList())
                 ))
                 .collect(Collectors.toList());
@@ -61,10 +63,10 @@ public class PlannerService {
         plannerEntity.setUser(userEntity);
         plannerRepository.save(plannerEntity);
 
-        List<TodoDTO> todoDTOList = planner.getTodoDTOList();
+        List<TodoCreateDTO> todoCreateDTOList = planner.getTodoCreateDTOList();
 
-        if(todoDTOList != null && !todoDTOList.isEmpty()){
-            for(TodoDTO todoDTO : todoDTOList){
+        if(todoCreateDTOList != null && !todoCreateDTOList.isEmpty()){
+            for(TodoCreateDTO todoDTO : todoCreateDTOList){
                 TodoEntity todoEntity = new TodoEntity();
                 todoEntity.setPlanner(plannerEntity);
                 todoEntity.setContent(todoDTO.getContent());

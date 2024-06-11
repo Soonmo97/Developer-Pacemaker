@@ -11,6 +11,7 @@ import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @SQLDelete(sql = "UPDATE study_Group SET is_deleted = 1 WHERE sg_seq = ?") // jpa delete 를 실행시킬 경우 해당 sql 문 실행
@@ -53,5 +54,9 @@ public class StudyGroupEntity {
     @JoinColumn(name = "uSeq", nullable = false)
     @JsonBackReference
     private UserEntity user;
+
+    @OneToMany(mappedBy = "studyGroup")
+    @JsonBackReference
+    private List<JoinRequestEntity> joinRequestEntityList;
 
 }
