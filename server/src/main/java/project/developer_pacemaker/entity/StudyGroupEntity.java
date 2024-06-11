@@ -2,6 +2,7 @@ package project.developer_pacemaker.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -56,11 +57,14 @@ public class StudyGroupEntity {
     private UserEntity user;
 
     @OneToMany(mappedBy = "studyGroup")
+    @JsonManagedReference
+    private List<RecruitmentBoardEntity> recruitmentBoards;
+  
+    @OneToMany(mappedBy = "studyGroup")
     @JsonBackReference
     private List<JoinRequestEntity> joinRequestEntityList;
 
     @OneToMany(mappedBy = "studyGroup")
     @JsonBackReference
     private List<GroupMembersEntity> groupMembers;
-
 }
