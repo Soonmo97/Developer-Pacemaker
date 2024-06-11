@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import project.developer_pacemaker.entity.GroupMembersEntity;
 import project.developer_pacemaker.entity.UserEntity;
+import project.developer_pacemaker.repository.GroupMemberRepository;
 import project.developer_pacemaker.repository.UserRepository;
 
 @Service
@@ -14,10 +16,14 @@ public class UserService {
     final private UserRepository userRepository;
     final private BCryptPasswordEncoder passwordEncoder;
 
+    final private GroupMemberRepository groupMemberRepository;
+
     @Autowired
-    public UserService(final UserRepository userRepository, final BCryptPasswordEncoder passwordEncoder) {
+    public UserService(final UserRepository userRepository, final BCryptPasswordEncoder passwordEncoder,
+                       final GroupMemberRepository groupMemberRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.groupMemberRepository = groupMemberRepository;
     }
 
     public UserEntity create(final UserEntity userEntity) {
@@ -72,10 +78,15 @@ public class UserService {
         return userRepository.findById(uSeqLong).orElseThrow(()->new RuntimeException("RuntimeException"));
     }
 
-    public String deleteUser(final String uSeq) {
-        Long uSeqLong = Long.parseLong(uSeq);
-        userRepository.deleteById(uSeqLong);
-        return "회원탈퇴 되었습니다.";
+    public UserEntity deleteUser(final String uSeq) {
+        UserEntity user = userRepository.findById(Long.parseLong(uSeq)).orElseThrow(()->new RuntimeException("RuntimeException"));;
+
+        // 스터디그룹 멤버에서도 삭제
+        groupMemberRepository.deletedByUSeq(Long.parseLong(uSeq));
+
+        userRepository.delete(user);
+
+        return user;
     }
 
     public UserEntity updateNickname(final String uSeq, String newNickname) {
@@ -97,6 +108,11 @@ public class UserService {
             return "비밀번호 변경완료";
         }
         return "존재하지 않는 사용자입니다.";
+    }
+
+    public boolean comparePw(final String uSeq, final String password) {
+        UserEntity user = userRepository.findById(Long.parseLong(uSeq)).orElseThrow(() -> new RuntimeException("RuntimeException"));
+        return passwordEncoder.matches(password, user.getPw());
     }
 
 }

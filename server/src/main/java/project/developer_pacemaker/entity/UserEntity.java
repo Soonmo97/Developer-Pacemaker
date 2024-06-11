@@ -51,5 +51,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private List<StudyGroupEntity> studyGroups;
+
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    private List<GroupMembersEntity> groupMembers;
 }
 
