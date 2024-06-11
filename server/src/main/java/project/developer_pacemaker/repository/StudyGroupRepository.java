@@ -12,4 +12,5 @@ public interface StudyGroupRepository extends JpaRepository<StudyGroupEntity, Lo
     Boolean existsByName(String name);
 
     List<StudyGroupEntity> findByUser(UserEntity user);
+
 }

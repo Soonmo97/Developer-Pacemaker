@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TodoDTO {
+    private long tSeq;
     private String content;
     private Float duration;
     private Boolean isCompleted;
