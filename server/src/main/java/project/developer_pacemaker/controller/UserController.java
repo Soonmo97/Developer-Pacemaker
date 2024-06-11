@@ -120,7 +120,7 @@ public class UserController {
 
     @Operation(summary = "비밀번호 찾기(재설정)", description = "비밀번호 찾기(재설정) API 입니다.")
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestBody UserDTO userDTO
+    public ResponseEntity<?> resetPassword(@RequestBody UserDTO userDTO
     ) {
         try {
             UserEntity existingUser = userService.findByEmail(userDTO.getEmail());
@@ -133,7 +133,10 @@ public class UserController {
                 return ResponseEntity.badRequest().body("입력하신 이메일은 존재하지 않습니다.");
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
         }
     }
 
@@ -183,25 +186,51 @@ public class UserController {
 
     @Operation(summary = "마이페이지 비밀번호 변경(재설정)", description = "마이페이지 비밀번호 변경(재설정) API 입니다.")
     @PatchMapping("/password")
-    public ResponseEntity<String> resetPassword(@AuthenticationPrincipal String uSeq,
+    public ResponseEntity<?> resetPassword(@AuthenticationPrincipal String uSeq,
                                                 @RequestBody UserDTO userDTO
     ) {
         try {
             String result = userService.updatePw(uSeq, userDTO.getPw());
             return ResponseEntity.ok(result);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
         }
     }
 
     @Operation(summary = "마이페이지 회원탈퇴", description = "마이페이지 회원탈퇴 API 입니다.")
     @DeleteMapping()
-    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal String uSeq) {
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal String uSeq) {
         try {
-            String result = userService.deleteUser(uSeq);
-            return ResponseEntity.ok(result);
+            UserEntity user = userService.deleteUser(uSeq);
+            UserDTO userDTO = UserDTO.builder()
+                .img(user.getImg())
+                .nickname(user.getNickname())
+                .email(user.getEmail())
+                .uSeq(user.getUSeq())
+                .social(user.getSocial())
+                .build();
+            return ResponseEntity.ok(userDTO);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+    }
+
+    @Operation(summary = "비밀번호 비교값 반환", description = "비밀번호 비교값 반환 API 입니다.")
+    @GetMapping("/comparePw")
+    public ResponseEntity<?> comparePw(@AuthenticationPrincipal String uSeq, @RequestParam String password) {
+        try {
+            return ResponseEntity.ok(userService.comparePw(uSeq, password));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
         }
     }
 

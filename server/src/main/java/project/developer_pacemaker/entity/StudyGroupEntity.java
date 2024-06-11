@@ -14,9 +14,9 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@SQLDelete(sql = "UPDATE study_Group SET is_deleted = 1 WHERE sg_seq = ?") // jpa delete 를 실행시킬 경우 해당 sql 문 실행
+@SQLDelete(sql = "UPDATE study_group SET is_deleted = 1 WHERE sg_seq = ?") // jpa delete 를 실행시킬 경우 해당 sql 문 실행
 @SQLRestriction("is_deleted = 0") // 해당 엔티티의 기본 쿼리에 디폴트로 where 조건을 적용하는 어노테이션
-@Table(name = "studyGroup")
+@Table(name = "study_group")
 @Getter
 @Setter
 @Builder
@@ -58,5 +58,8 @@ public class StudyGroupEntity {
     @OneToMany(mappedBy = "studyGroup")
     @JsonBackReference
     private List<JoinRequestEntity> joinRequestEntityList;
+
+    private List<GroupMembersEntity> groupMembers;
+
 
 }

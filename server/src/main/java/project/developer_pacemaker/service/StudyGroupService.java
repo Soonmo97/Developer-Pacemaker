@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import project.developer_pacemaker.dto.StudyGroupDTO;
+import project.developer_pacemaker.entity.GroupMembersEntity;
 import project.developer_pacemaker.entity.StudyGroupEntity;
 import project.developer_pacemaker.entity.UserEntity;
+import project.developer_pacemaker.repository.GroupMemberRepository;
 import project.developer_pacemaker.repository.StudyGroupRepository;
 import project.developer_pacemaker.repository.UserRepository;
 
@@ -18,10 +20,14 @@ public class StudyGroupService {
     final private StudyGroupRepository studyGroupRepository;
     final private UserRepository userRepository;
 
+    final private GroupMemberRepository groupMemberRepository;
+
     @Autowired
-    public StudyGroupService(StudyGroupRepository studyGroupRepository, UserRepository userRepository) {
+    public StudyGroupService(final StudyGroupRepository studyGroupRepository, final UserRepository userRepository
+    , final GroupMemberRepository groupMemberRepository) {
         this.studyGroupRepository = studyGroupRepository;
         this.userRepository = userRepository;
+        this.groupMemberRepository =groupMemberRepository;
     }
 
     public StudyGroupEntity create(final StudyGroupEntity studyGroupEntity) {
@@ -37,8 +43,14 @@ public class StudyGroupService {
             log.warn("studyGroup name already exists {}", name);
             throw new RuntimeException("studyGroup name already exists");
         }
-
-        return studyGroupRepository.save(studyGroupEntity);
+        StudyGroupEntity resStudyGroup = studyGroupRepository.save(studyGroupEntity);
+        // 스터디그룹 생성 시 그룹장 그룹멤버스에 추가
+        GroupMembersEntity groupMembers = GroupMembersEntity.builder()
+            .user(studyGroupEntity.getUser())
+            .studyGroup(studyGroupEntity)
+            .build();
+        groupMemberRepository.save(groupMembers);
+        return resStudyGroup;
     }
 
     public UserEntity findByUSeq(final String uSeq) {
@@ -63,14 +75,14 @@ public class StudyGroupService {
         return studyGroupRepository.existsByName(name);
     }
 
-    public String delete(final String uSeq, final long sgSeq) {
+    public StudyGroupEntity delete(final String uSeq, final long sgSeq) {
         StudyGroupEntity studyGroup = studyGroupRepository.findById(sgSeq).orElseThrow(()->new RuntimeException("RuntimeException"));
         if (Long.parseLong(uSeq) != studyGroup.getUser().getUSeq()) {
             log.warn("스터디그룹의 그룹장이 아닙니다. {}", uSeq);
             throw new RuntimeException("스터디그룹의 그룹장이 아닙니다.");
         }
         studyGroupRepository.deleteById(sgSeq);
-        return "스터디그룹이 삭제되었습니다.";
+        return studyGroup;
     }
 
     public List<StudyGroupEntity> getAll() {
@@ -81,4 +93,5 @@ public class StudyGroupService {
         UserEntity user = findByUSeq(uSeq);
         return studyGroupRepository.findByUser(user);
     }
+
 }

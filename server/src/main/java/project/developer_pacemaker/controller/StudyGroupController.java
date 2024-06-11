@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.ResErrorDTO;
 import project.developer_pacemaker.dto.StudyGroupDTO;
 import project.developer_pacemaker.dto.UserDTO;
+import project.developer_pacemaker.entity.GroupMembersEntity;
 import project.developer_pacemaker.entity.StudyGroupEntity;
 import project.developer_pacemaker.entity.UserEntity;
 import project.developer_pacemaker.service.StudyGroupService;
@@ -42,24 +43,6 @@ public class StudyGroupController {
             );
         }
     }
-
-//    @Operation(summary = "스터디그룹 상세 조회", description = "스터디그룹 상세 조회 API 입니다.")
-//    @GetMapping("/{sgSeq}")
-//    public ResponseEntity<?> getDetail(@PathVariable Long sgSeq) {
-//        try{
-//            // 추천스터디에서 스터디를 누르면 상세 정보인지, 스터디 사용자들 나열된 페이지인지, 모집글인지
-//            // 설명 추가할건지
-//            // 하나당 상세 조회하는게 필요한지
-//
-//        }
-//        catch (Exception e) {
-//            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
-//                .error(e.getMessage())
-//                .build()
-//            );
-//        }
-//    }
-
 
     @Operation(summary = "내 스터디그룹 전체 조회", description = "내 스터디그룹 전체 조회 API 입니다.")
     @GetMapping("/me")
@@ -143,13 +126,22 @@ public class StudyGroupController {
 
     @Operation(summary = "스터디그룹 삭제", description = "스터디그룹 삭제 API 입니다.")
     @DeleteMapping()
-    public ResponseEntity<String> delete(@AuthenticationPrincipal String uSeq,
+    public ResponseEntity<?> delete(@AuthenticationPrincipal String uSeq,
         @RequestBody StudyGroupDTO studyGroupDTO) {
         try {
-            String result = studyGroupService.delete(uSeq, studyGroupDTO.getSgSeq());
-            return ResponseEntity.ok(result);
+            StudyGroupEntity studyGroup = studyGroupService.delete(uSeq, studyGroupDTO.getSgSeq());
+
+            StudyGroupDTO resStudyGroupDTO = StudyGroupDTO.builder()
+                .sgSeq(studyGroup.getSgSeq())
+                .name(studyGroup.getName())
+                .uSeq(studyGroup.getUser().getUSeq())
+                .build();
+            return ResponseEntity.ok(resStudyGroupDTO);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
         }
     }
 
