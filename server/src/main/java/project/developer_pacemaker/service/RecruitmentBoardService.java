@@ -1,16 +1,13 @@
 package project.developer_pacemaker.service;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import project.developer_pacemaker.dto.RecruitmentBoardDTO;
 import project.developer_pacemaker.entity.RecruitmentBoardEntity;
 import project.developer_pacemaker.entity.StudyGroupEntity;
 import project.developer_pacemaker.repository.RecruitmentBoardRepository;
+import project.developer_pacemaker.repository.StudyGroupRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,8 +17,19 @@ import java.util.Optional;
 public class RecruitmentBoardService {
     @Autowired
     private RecruitmentBoardRepository recruitmentBoardRepository;
+    @Autowired
+    private StudyGroupRepository studyGroupRepository; // StudyGroupRepository를 주입 받아 사용
+
 
     public RecruitmentBoardEntity createRecruitmentBoard(RecruitmentBoardEntity recruitmentBoard) {
+        // StudyGroupEntity를 이용하여 name을 설정
+        StudyGroupEntity studyGroup = recruitmentBoard.getStudyGroup();
+        if (studyGroup != null) {
+            Optional<StudyGroupEntity> optionalStudyGroup = studyGroupRepository.findById(studyGroup.getSgSeq());
+            if (optionalStudyGroup.isPresent()) {
+                recruitmentBoard.setTitle(optionalStudyGroup.get().getName());
+            }
+        }
         return recruitmentBoardRepository.save(recruitmentBoard);
     }
     public List<RecruitmentBoardEntity> getAllRecruitmentBoards(){
