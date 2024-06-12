@@ -11,4 +11,5 @@ public class StudyGroupDTO {
     private int max;
     private long uSeq;
     private String registered;
+    private String goal;
 }

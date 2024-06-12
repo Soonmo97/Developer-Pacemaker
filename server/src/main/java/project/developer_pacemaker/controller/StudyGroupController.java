@@ -67,14 +67,15 @@ public class StudyGroupController {
             UserEntity user = studyGroupService.findByUSeq(uSeq);
             StudyGroupEntity studyGroup = StudyGroupEntity.builder()
                 .name(studyGroupDTO.getName())
+                .goal(studyGroupDTO.getGoal())
                 .user(user)
                 .build();
 
             StudyGroupEntity createStudyGroup = studyGroupService.create(studyGroup);
             StudyGroupDTO responseStudyGroupDTO = studyGroupDTO.builder()
                 .name(createStudyGroup.getName())
+                .goal(createStudyGroup.getGoal())
                 .uSeq(createStudyGroup.getUser().getUSeq())
-                .max(createStudyGroup.getMax())
                 .registered(createStudyGroup.getRegistered())
                 .build();
 
@@ -103,14 +104,13 @@ public class StudyGroupController {
     }
 
     @Operation(summary = "스터디그룹 수정(이름)", description = "스터디그룹 수정(이름) API 입니다.")
-    @PatchMapping()
-    public ResponseEntity<?> patch(@AuthenticationPrincipal String uSeq,
+    @PatchMapping("/name")
+    public ResponseEntity<?> patchName(@AuthenticationPrincipal String uSeq,
         @RequestBody StudyGroupDTO studyGroupDTO) {
         try {
             StudyGroupEntity studyGroupEntity = studyGroupService.updateName(uSeq, studyGroupDTO);
             StudyGroupDTO resStudyGroupDTO = StudyGroupDTO.builder()
                 .name(studyGroupEntity.getName())
-                .max(studyGroupEntity.getMax())
                 .uSeq(studyGroupEntity.getUser().getUSeq())
                 .registered(studyGroupEntity.getRegistered())
                 .build();
@@ -123,6 +123,28 @@ public class StudyGroupController {
             );
         }
     }
+
+    @Operation(summary = "스터디그룹 수정(공동목표)", description = "스터디그룹 수정(공동목표) API 입니다.")
+    @PatchMapping("/goal")
+    public ResponseEntity<?> patchGoal(@AuthenticationPrincipal String uSeq,
+                                   @RequestBody StudyGroupDTO studyGroupDTO) {
+        try {
+            StudyGroupEntity studyGroupEntity = studyGroupService.updateGoal(uSeq, studyGroupDTO);
+            StudyGroupDTO resStudyGroupDTO = StudyGroupDTO.builder()
+                .goal(studyGroupEntity.getName())
+                .uSeq(studyGroupEntity.getUser().getUSeq())
+                .registered(studyGroupEntity.getRegistered())
+                .build();
+
+            return ResponseEntity.ok(resStudyGroupDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+    }
+
 
     @Operation(summary = "스터디그룹 삭제", description = "스터디그룹 삭제 API 입니다.")
     @DeleteMapping()

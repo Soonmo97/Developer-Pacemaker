@@ -32,7 +32,8 @@ public class StudyGroupService {
 
     public StudyGroupEntity create(final StudyGroupEntity studyGroupEntity) {
         if (studyGroupEntity == null || studyGroupEntity.getName() == null ||
-            studyGroupEntity.getName().trim().isEmpty()
+            studyGroupEntity.getName().trim().isEmpty() || studyGroupEntity.getGoal() == null ||
+            studyGroupEntity.getGoal().trim().isEmpty()
         ) {
             throw new RuntimeException("Invalid arguments");
         }
@@ -43,6 +44,7 @@ public class StudyGroupService {
             log.warn("studyGroup name already exists {}", name);
             throw new RuntimeException("studyGroup name already exists");
         }
+        studyGroupEntity.setCurrent(studyGroupEntity.getCurrent() + 1);
         StudyGroupEntity resStudyGroup = studyGroupRepository.save(studyGroupEntity);
         // 스터디그룹 생성 시 그룹장 그룹멤버스에 추가
         GroupMembersEntity groupMembers = GroupMembersEntity.builder()
@@ -66,6 +68,19 @@ public class StudyGroupService {
                 throw new RuntimeException("스터디그룹의 그룹장이 아닙니다.");
             }
             studyGroup.setName(studyGroupDTO.getName());
+            return studyGroupRepository.save(studyGroup);
+        }
+        return null;
+    }
+
+    public StudyGroupEntity updateGoal(final String uSeq, final StudyGroupDTO studyGroupDTO) {
+        StudyGroupEntity studyGroup= studyGroupRepository.findById(studyGroupDTO.getSgSeq()).orElseThrow(()->new RuntimeException("RuntimeException"));
+        if (studyGroup != null) {
+            if (Long.parseLong(uSeq) != studyGroup.getUser().getUSeq()) {
+                log.warn("스터디그룹의 그룹장이 아닙니다. {}", uSeq);
+                throw new RuntimeException("스터디그룹의 그룹장이 아닙니다.");
+            }
+            studyGroup.setGoal(studyGroupDTO.getGoal());
             return studyGroupRepository.save(studyGroup);
         }
         return null;
