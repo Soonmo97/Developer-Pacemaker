@@ -37,5 +37,6 @@ out/
 ### VS Code ###
 .vscode/
 
- Ignore env.properties file
- src/main/resources/env.properties
+### env ###
+src/main/resources/env.properties
+
