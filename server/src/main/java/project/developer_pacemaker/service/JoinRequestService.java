@@ -81,6 +81,7 @@ public class JoinRequestService {
                 return false;
             }
         }catch (Exception e){
+            System.out.println("delete::eeee"+e.getMessage());
             return false;
         }
     }
