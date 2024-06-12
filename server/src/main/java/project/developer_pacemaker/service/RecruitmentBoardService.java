@@ -1,13 +1,12 @@
 package project.developer_pacemaker.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import project.developer_pacemaker.dto.RecruitmentBoardDTO;
 import project.developer_pacemaker.entity.RecruitmentBoardEntity;
 import project.developer_pacemaker.entity.StudyGroupEntity;
 import project.developer_pacemaker.repository.RecruitmentBoardRepository;
 import project.developer_pacemaker.repository.StudyGroupRepository;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,12 +14,13 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class RecruitmentBoardService {
+    private final RecruitmentBoardRepository recruitmentBoardRepository;
+    private final StudyGroupRepository studyGroupRepository;
     @Autowired
-    private RecruitmentBoardRepository recruitmentBoardRepository;
-    @Autowired
-    private StudyGroupRepository studyGroupRepository; // StudyGroupRepository를 주입 받아 사용
-
-
+    public RecruitmentBoardService(RecruitmentBoardRepository recruitmentBoardRepository, StudyGroupRepository studyGroupRepository) {
+        this.recruitmentBoardRepository = recruitmentBoardRepository;
+        this.studyGroupRepository = studyGroupRepository;
+    }
     public RecruitmentBoardEntity createRecruitmentBoard(RecruitmentBoardEntity recruitmentBoard) {
         // StudyGroupEntity를 이용하여 name을 설정
         StudyGroupEntity studyGroup = recruitmentBoard.getStudyGroup();
@@ -32,11 +32,13 @@ public class RecruitmentBoardService {
         }
         return recruitmentBoardRepository.save(recruitmentBoard);
     }
+
     public List<RecruitmentBoardEntity> getAllRecruitmentBoards(){
         return recruitmentBoardRepository.findAll();
     }
-    public Optional<RecruitmentBoardEntity> getRecruitmentBoardById(Long id){ // 값이 있을 수도, 없을수도 = optional
-        return recruitmentBoardRepository.findById(id); //
+
+    public Optional<RecruitmentBoardEntity> getRecruitmentBoardByTitle(String title){ // 값이 있을 수도, 없을수도 = optional
+        return recruitmentBoardRepository.findByTitle(title); //
     }
 
     public RecruitmentBoardEntity updateRecruitmentBoard(Long id, RecruitmentBoardEntity recruitmentBoardDetails, String u_Seq){
@@ -56,6 +58,7 @@ public class RecruitmentBoardService {
             throw new RuntimeException("RecruitmentBoard id를 찾을 수 없습니다."+id);
         }
     }
+
     public void deleteRecruitmentBoard(Long id, String u_Seq){
         Optional<RecruitmentBoardEntity> optionalRecruitmentBoard = recruitmentBoardRepository.findById(id);
         if(optionalRecruitmentBoard.isPresent()){
