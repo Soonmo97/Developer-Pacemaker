@@ -21,13 +21,22 @@ public class RecruitmentBoardService {
         this.recruitmentBoardRepository = recruitmentBoardRepository;
         this.studyGroupRepository = studyGroupRepository;
     }
-    public RecruitmentBoardEntity createRecruitmentBoard(RecruitmentBoardEntity recruitmentBoard) {
+    public RecruitmentBoardEntity createRecruitmentBoard(RecruitmentBoardEntity recruitmentBoard, long u_seq) {
         // StudyGroupEntity를 이용하여 name을 설정
         StudyGroupEntity studyGroup = recruitmentBoard.getStudyGroup();
         if (studyGroup != null) {
             Optional<StudyGroupEntity> optionalStudyGroup = studyGroupRepository.findById(studyGroup.getSgSeq());
             if (optionalStudyGroup.isPresent()) {
+                StudyGroupEntity foundStudyGroup = optionalStudyGroup.get();
+                log.info("Found StudyGroup: {}, User uSeq: {}", foundStudyGroup.getSgSeq(), foundStudyGroup.getUser().getUSeq());
+                if(foundStudyGroup.getUser().getUSeq() != u_seq){
+                    log.warn("user is not sgSeq, user ID : {}, sgSeq ID {}", u_seq, foundStudyGroup.getUser().getUSeq());
+                    throw new RuntimeException("사용자가 스터디 그룹의 그룹장이 아닙니다.");
+                }
                 recruitmentBoard.setTitle(optionalStudyGroup.get().getName());
+            } else{
+                log.warn("스터디 그룹을 찾을 수 없습니다. sgSeq: {}", studyGroup.getSgSeq());
+                throw new RuntimeException("스터디 그룹을 찾을 수 없습니다.");
             }
         }
         return recruitmentBoardRepository.save(recruitmentBoard);
