@@ -60,37 +60,60 @@ public class GroupMembersService {
         GroupMembersEntity member = groupMemberRepository.findByUSeqAndStudyGroup(memberUSeq,sgSeq);
         groupMemberRepository.delete(member);
 
+        // 현재 참여 인원 감소 (* 테스트 필요 *)
+        int current = studyGroup.getCurrent();
+        studyGroup.setCurrent(current-1);
+        studyGroupRepository.save(studyGroup);
+
         UserEntity user = userRepository.findById(memberUSeq).orElseThrow(() -> new RuntimeException("RuntimeException"));;
         return user;
     }
 
-    public GroupMembersEntity createMember(final String uSeq, final long sgSeq, final long memberUSeq) {
-        UserEntity user = userRepository.findById(memberUSeq).orElseThrow(() -> new RuntimeException("RuntimeException"));
-        StudyGroupEntity studyGroup = studyGroupRepository.findById(sgSeq).orElseThrow(() -> new RuntimeException("RuntimeException"));
-        // 그룹장일 때만 추가 가능
-        if (Long.parseLong(uSeq) != studyGroup.getUser().getUSeq()) {
-            log.warn("스터디그룹의 그룹장이 아닙니다. {}", uSeq);
-            throw new RuntimeException("스터디그룹의 그룹장이 아닙니다.");
+    public boolean createMember(final long uSeq, final long sgSeq, final long memberUSeq) {
+        try {
+            UserEntity user = userRepository.findById(memberUSeq).orElseThrow(() -> new IllegalArgumentException("User not found"));
+            StudyGroupEntity studyGroup = studyGroupRepository.findById(sgSeq).orElseThrow(() -> new RuntimeException("RuntimeException"));
+
+            // 그룹장일 때만 추가 가능
+            if (uSeq != studyGroup.getUser().getUSeq()) {
+                log.warn("스터디그룹의 그룹장이 아닙니다. {}", uSeq);
+                throw new RuntimeException("스터디그룹의 그룹장이 아닙니다.");
+            }
+            // 기존에 이미 존재하는 멤버인지 확인
+            GroupMembersEntity member = groupMemberRepository.findByUSeqAndStudyGroup(memberUSeq, sgSeq);
+            if (member!=null) {
+                throw new RuntimeException("이미 가입되었습니다.");
+            }
+
+            // 현재 참여 인원이 15명 미만에만 멤버 추가 가능
+            if (studyGroup.getCurrent() < 15) {
+                GroupMembersEntity groupMembersEntity = new GroupMembersEntity();
+                groupMembersEntity.setStudyGroup(studyGroup);
+                groupMembersEntity.setUser(user);
+                groupMemberRepository.save(groupMembersEntity);
+            }
+
+            // 현재 참여 인원 증가
+            int current = studyGroup.getCurrent();
+            studyGroup.setCurrent(current + 1);
+            studyGroupRepository.save(studyGroup);
+
+        }catch (Exception e){
+            return false;
         }
 
-        // 정원(15명)미만일 때만 추가
-        int max = studyGroup.getMax();
-        if (max >= 15) {
-            log.warn("스터디그룹 정원이 꽉 차있습니다. (정원 초과) {}", max);
-            throw new RuntimeException("스터디그룹 정원이 꽉 차있습니다. (정원 초과)");
-        }
-
-        GroupMembersEntity createGroupMember = GroupMembersEntity.builder()
-            .user(user)
-            .studyGroup(studyGroup)
-            .build();
-        return groupMemberRepository.save(createGroupMember);
+        return true;
     }
 
     public UserEntity deleteMember(final String uSeq, final Long sgSeq) {
         StudyGroupEntity studyGroup = studyGroupRepository.findById(sgSeq).orElseThrow(() -> new RuntimeException("RuntimeException"));
         GroupMembersEntity member = groupMemberRepository.findByUSeqAndStudyGroup(Long.parseLong(uSeq),sgSeq);
         groupMemberRepository.delete(member);
+
+        // 현재 참여 인원 감소( *테스트 필요* )
+        int current = studyGroup.getCurrent();
+        studyGroup.setCurrent(current - 1);
+        studyGroupRepository.save(studyGroup);
 
         UserEntity user = userRepository.findById(Long.parseLong(uSeq)).orElseThrow(() -> new RuntimeException("RuntimeException"));;
         return user;
