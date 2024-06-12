@@ -222,10 +222,10 @@ public class UserController {
     }
 
     @Operation(summary = "비밀번호 비교값 반환", description = "비밀번호 비교값 반환 API 입니다.")
-    @GetMapping("/comparePw")
-    public ResponseEntity<?> comparePw(@AuthenticationPrincipal String uSeq, @RequestParam String password) {
+    @PostMapping("/comparePw")
+    public ResponseEntity<?> comparePw(@AuthenticationPrincipal String uSeq, @RequestBody UserDTO userDTO) {
         try {
-            return ResponseEntity.ok(userService.comparePw(uSeq, password));
+            return ResponseEntity.ok(userService.comparePw(uSeq, userDTO.getPw()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ResErrorDTO.builder()
                 .error(e.getMessage())
