@@ -29,16 +29,12 @@ public class StudyGroupEntity {
     @Column(name = "sgSeq", updatable = false)
     private long sgSeq;
 
-    @Column(name="name", nullable = false, length = 30)
+    @Column(name="name", nullable = false, length = 20)
     private String name;
 
     @CreationTimestamp
     @Column(name="registered", nullable = false)
     private String registered;
-
-    @Column(name="max", nullable = false)
-    @ColumnDefault("15")
-    private final int max = 15;
 
     @Column(name="current", nullable = true)
     private int current;
@@ -50,6 +46,9 @@ public class StudyGroupEntity {
     @Column(name="isDeleted", nullable = false)
     @ColumnDefault("false")
     private boolean isDeleted;
+
+    @Column(name="goal", nullable = false, length = 20)
+    private String goal;
 
     @ManyToOne
     @JoinColumn(name = "uSeq", nullable = false)

@@ -60,6 +60,10 @@ public class GroupMembersService {
         GroupMembersEntity member = groupMemberRepository.findByUSeqAndStudyGroup(memberUSeq,sgSeq);
         groupMemberRepository.delete(member);
 
+        // 스터디그룹의 현재 인원에서 -1 업데이트
+        studyGroup.setCurrent(studyGroup.getCurrent());
+        studyGroupRepository.save(studyGroup);
+
         UserEntity user = userRepository.findById(memberUSeq).orElseThrow(() -> new RuntimeException("RuntimeException"));;
         return user;
     }
@@ -74,9 +78,9 @@ public class GroupMembersService {
         }
 
         // 정원(15명)미만일 때만 추가
-        int max = studyGroup.getMax();
-        if (max >= 15) {
-            log.warn("스터디그룹 정원이 꽉 차있습니다. (정원 초과) {}", max);
+        int current = studyGroup.getCurrent();
+        if (current + 1 > 15) {
+            log.warn("스터디그룹 정원이 꽉 차있습니다. (정원 초과) 현재 인원{}", current);
             throw new RuntimeException("스터디그룹 정원이 꽉 차있습니다. (정원 초과)");
         }
 
@@ -84,13 +88,23 @@ public class GroupMembersService {
             .user(user)
             .studyGroup(studyGroup)
             .build();
-        return groupMemberRepository.save(createGroupMember);
+        // 추가
+        GroupMembersEntity resGroupMember = groupMemberRepository.save(createGroupMember);
+        // 스터디그룹 현재 인원에 +1
+        studyGroup.setCurrent(studyGroup.getCurrent() + 1);
+        studyGroupRepository.save(studyGroup);
+
+        return groupMemberRepository.save(resGroupMember);
     }
 
     public UserEntity deleteMember(final String uSeq, final Long sgSeq) {
         StudyGroupEntity studyGroup = studyGroupRepository.findById(sgSeq).orElseThrow(() -> new RuntimeException("RuntimeException"));
         GroupMembersEntity member = groupMemberRepository.findByUSeqAndStudyGroup(Long.parseLong(uSeq),sgSeq);
         groupMemberRepository.delete(member);
+
+        // 스터디그룹의 현재 인원에서 -1 업데이트
+        studyGroup.setCurrent(studyGroup.getCurrent());
+        studyGroupRepository.save(studyGroup);
 
         UserEntity user = userRepository.findById(Long.parseLong(uSeq)).orElseThrow(() -> new RuntimeException("RuntimeException"));;
         return user;
