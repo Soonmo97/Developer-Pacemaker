@@ -60,6 +60,7 @@ public class GroupMembersService {
         GroupMembersEntity member = groupMemberRepository.findByUSeqAndStudyGroup(memberUSeq,sgSeq);
         groupMemberRepository.delete(member);
 
+
         // 현재 참여 인원 감소 (* 테스트 필요 *)
         int current = studyGroup.getCurrent();
         studyGroup.setCurrent(current-1);

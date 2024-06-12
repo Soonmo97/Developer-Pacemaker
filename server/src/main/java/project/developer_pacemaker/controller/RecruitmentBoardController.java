@@ -15,8 +15,11 @@ import java.util.List;
 @RequestMapping("/api/recruitmentBoard")
 public class RecruitmentBoardController {
 
+    final private RecruitmentBoardService recruitmentBoardService;
     @Autowired
-    private RecruitmentBoardService recruitmentBoardService;
+    public RecruitmentBoardController(RecruitmentBoardService recruitmentBoardService) {
+        this.recruitmentBoardService = recruitmentBoardService;
+    }
 
     @Operation(summary = "스터디 모집 게시글 작성", description = "스터디 모집 게시판 작성 API 입니다.")
     @PostMapping
@@ -32,14 +35,15 @@ public class RecruitmentBoardController {
     public List<RecruitmentBoardEntity> getAllRecruitmentBoards(){
         return recruitmentBoardService.getAllRecruitmentBoards();
     }
-    @Operation(summary = "스터디 모집 게시글 ID검색", description = "스터디 모집 게시판 ID 검색 API 입니다.")
-    @GetMapping("/{id}")
-    public ResponseEntity<RecruitmentBoardEntity> getRecruitmentBoardById(@PathVariable Long id){
-        // ResponseEntity반환, 객체는 RecruitmentBoardEntity 본문으로, @PathVariable은 URL에서 {id} 에 해당하는 부분을 추출
-        return recruitmentBoardService.getRecruitmentBoardById(id)
-                // recruitmentBoardService의 getRecruitmentBoardById는 optional -> 값 있을수도, 없을수도
-                .map(ResponseEntity::ok) // optional에 값 있으면 ok()후 ResponseEntity에 담음
-                .orElse(ResponseEntity.notFound().build());
+    @Operation(summary = "스터디 모집 게시글 제목 검색", description = "스터디 모집 게시판 제목 검색 API 입니다.")
+    @GetMapping("/search")
+    public ResponseEntity<List<RecruitmentBoardEntity>> getRecruitmentBoardByTitle(@RequestParam String title){
+        List<RecruitmentBoardEntity> recruitmentBoars = recruitmentBoardService.getRecruitmentBoardByTitle(title);
+        if(recruitmentBoars.isEmpty()){
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(recruitmentBoars);
+        }
     }
     @Operation(summary = "스터디 모집 게시글 수정", description = "스터디 모집 게시글 수정 API 입니다.")
     @PutMapping("/{id}")
