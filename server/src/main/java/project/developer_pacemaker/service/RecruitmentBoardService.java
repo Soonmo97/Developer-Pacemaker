@@ -37,8 +37,8 @@ public class RecruitmentBoardService {
         return recruitmentBoardRepository.findAll();
     }
 
-    public Optional<RecruitmentBoardEntity> getRecruitmentBoardByTitle(String title){ // 값이 있을 수도, 없을수도 = optional
-        return recruitmentBoardRepository.findByTitle(title); //
+    public List<RecruitmentBoardEntity> getRecruitmentBoardByTitle(String title){
+        return recruitmentBoardRepository.findByTitle(title);
     }
 
     public RecruitmentBoardEntity updateRecruitmentBoard(Long id, RecruitmentBoardEntity recruitmentBoardDetails, String u_Seq){
