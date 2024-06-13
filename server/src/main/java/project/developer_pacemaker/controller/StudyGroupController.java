@@ -1,6 +1,7 @@
 package project.developer_pacemaker.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -222,6 +223,38 @@ public class StudyGroupController {
                 .build()
             );
         }
+    }
+
+    @Operation(summary = "스터디그룹 그룹장 위임하기", description = "스터디그룹 그룹장 위임하기 API 입니다. {sgSeq, newUSeq}")
+    @PatchMapping("/change-uSeq")
+    public ResponseEntity<?> changeUSeq(@AuthenticationPrincipal String uSeq,
+                                        @RequestBody StudyGroupDTO studyGroupDTO
+                                        ) {
+        try {
+            StudyGroupEntity studyGroup = studyGroupService.changeUSeq(uSeq, studyGroupDTO.getSgSeq(), studyGroupDTO.getNewUSeq());
+            return ResponseEntity.ok(studyGroup);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+    }
+
+    @Operation(summary = "내가 그룹장인 스터디그룹 존재여부 확인", description = "내가 그룹장인 스터디그룹 존재여부 확인 API 입니다..")
+    @GetMapping("/check-uSeq")
+    public ResponseEntity<?> checkUSeq(@AuthenticationPrincipal String uSeq) {
+        try {
+            boolean result = studyGroupService.checkUSeq(Long.parseLong(uSeq));
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+
     }
 
 }

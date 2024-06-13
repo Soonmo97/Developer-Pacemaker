@@ -66,22 +66,22 @@ public class GroupMembersController {
 
     }
 
-//    @Operation(summary = "스터디그룹 멤버 추가(신청 수락)", description = "스터디그룹 멤버 추가 API 입니다.")
-//    @PostMapping()
-//    public ResponseEntity<?> plusMember(@AuthenticationPrincipal String uSeq,
-//                                        @RequestBody GroupMembersDTO groupMembersDTO) {
-//        try {
-//            GroupMembersEntity groupMember = groupMembersService.createMember(uSeq, groupMembersDTO.getSgSeq(), groupMembersDTO.getUSeq());
-//            return ResponseEntity.ok(groupMember);
-//
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
-//                .error(e.getMessage())
-//                .build()
-//            );
-//        }
-//
-//    }
+    @Operation(summary = "스터디그룹 멤버 추가(신청 수락)", description = "스터디그룹 멤버 추가 API 입니다.")
+    @PostMapping()
+    public ResponseEntity<?> plusMember(@AuthenticationPrincipal String uSeq,
+                                        @RequestBody GroupMembersDTO groupMembersDTO) {
+        try {
+            boolean result = groupMembersService.createMember(Long.parseLong(uSeq), groupMembersDTO.getSgSeq(), groupMembersDTO.getUSeq());
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+
+    }
 
     @Operation(summary = "스터디그룹 탈퇴", description = "스터디그룹 탈퇴 API 입니다.")
     @DeleteMapping()

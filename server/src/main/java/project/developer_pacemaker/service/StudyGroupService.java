@@ -138,4 +138,28 @@ public class StudyGroupService {
         return studyGroup.isStatus();
     }
 
+    public StudyGroupEntity changeUSeq(final String uSeq, final long sgSeq, final long newUSeq) {
+        StudyGroupEntity studyGroup = studyGroupRepository.findById(sgSeq).orElseThrow(()-> new RuntimeException("RuntimeException"));
+        if (Long.parseLong(uSeq) != studyGroup.getUser().getUSeq()) {
+            log.warn("스터디그룹의 그룹장이 아닙니다. {}", uSeq);
+            throw new RuntimeException("스터디그룹의 그룹장이 아닙니다.");
+        }
+        UserEntity user = userRepository.findById(newUSeq).orElseThrow(()-> new RuntimeException("RuntimeException"));;
+        studyGroup.setUser(user);
+
+        return studyGroupRepository.save(studyGroup);
+    }
+
+    public boolean checkUSeq(final long uSeq) {
+        boolean result = false; // 내가 그룹장인 스터디그룹이 없으면 false
+        UserEntity user = userRepository.findById(uSeq).orElseThrow(()-> new RuntimeException("RuntimeException"));
+        List<StudyGroupEntity> studyGroups = studyGroupRepository.findByUser(user);
+        for (StudyGroupEntity studyGroup : studyGroups) {
+            if (studyGroup.getUser().getUSeq() == user.getUSeq()) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
 }
