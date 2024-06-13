@@ -12,4 +12,5 @@ public class StudyGroupDTO {
     private String registered;
     private String goal;
     private boolean status;
+    private long newUSeq;
 }
