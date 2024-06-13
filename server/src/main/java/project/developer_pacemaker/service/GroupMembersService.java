@@ -61,7 +61,7 @@ public class GroupMembersService {
         groupMemberRepository.delete(member);
 
         // 스터디그룹의 현재 인원에서 -1 업데이트
-        studyGroup.setCurrent(studyGroup.getCurrent()-1);
+        studyGroup.setCurrent(studyGroup.getCurrent() - 1);
         studyGroupRepository.save(studyGroup);
 
         UserEntity user = userRepository.findById(memberUSeq).orElseThrow(() -> new RuntimeException("RuntimeException"));;

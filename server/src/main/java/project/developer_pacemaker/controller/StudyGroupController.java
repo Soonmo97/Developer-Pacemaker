@@ -257,4 +257,17 @@ public class StudyGroupController {
 
     }
 
+    @Operation(summary = "내가 스터디그룹 그룹장인지 확인", description = "내가 스터디그룹 그룹장인지 확인 API 입니다. {sgSeq}")
+    @GetMapping("/check-uSeq-me/{sgSeq}")
+    public ResponseEntity<?> checkUSeqMe(@AuthenticationPrincipal String uSeq, @PathVariable String sgSeq) {
+        try {
+            boolean result = studyGroupService.checkUSeqMe(Long.parseLong(uSeq), Long.parseLong(sgSeq));
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+    }
 }

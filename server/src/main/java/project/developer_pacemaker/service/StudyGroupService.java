@@ -150,7 +150,7 @@ public class StudyGroupService {
         return studyGroupRepository.save(studyGroup);
     }
 
-    public boolean checkUSeq(final long uSeq) {
+    public boolean checkUSeq (final long uSeq) {
         boolean result = false; // 내가 그룹장인 스터디그룹이 없으면 false
         UserEntity user = userRepository.findById(uSeq).orElseThrow(()-> new RuntimeException("RuntimeException"));
         List<StudyGroupEntity> studyGroups = studyGroupRepository.findByUser(user);
@@ -159,6 +159,18 @@ public class StudyGroupService {
                 result = true;
             }
         }
+        return result;
+    }
+
+    public boolean checkUSeqMe (final long uSeq, final long sgSeq) {
+        boolean result = false; // 내가 그룹장이 아니면 false
+        UserEntity user = userRepository.findById(uSeq).orElseThrow(()-> new RuntimeException("RuntimeException"));
+        StudyGroupEntity studyGroup = studyGroupRepository.findById(sgSeq).orElseThrow(()-> new RuntimeException("RuntimeException"));;
+
+        if (studyGroup.getUser().getUSeq() == user.getUSeq()) {
+            result = true;
+        }
+
         return result;
     }
 
