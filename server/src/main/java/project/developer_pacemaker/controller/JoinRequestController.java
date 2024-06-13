@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.joinRequest.JoinRequestControlDTO;
+import project.developer_pacemaker.service.GroupMembersService;
 import project.developer_pacemaker.service.JoinRequestService;
 
 import java.util.List;
@@ -16,6 +17,9 @@ import java.util.Map;
 public class JoinRequestController {
     @Autowired
     JoinRequestService joinRequestService;
+
+    @Autowired
+    GroupMembersService groupMembersService;
 
     @GetMapping("/{sgSeq}")
     public ResponseEntity<?> getJoinRequest(@AuthenticationPrincipal String uSeq, @PathVariable long sgSeq){
@@ -31,6 +35,7 @@ public class JoinRequestController {
     @PostMapping()
     public ResponseEntity<String> postJoinRequest(@AuthenticationPrincipal String uSeq, @RequestBody JoinRequestControlDTO joinRequestControlDTO){
         try {
+            System.out.println("+==================="+joinRequestControlDTO.getUSeq());
             Long uSeqLong = Long.parseLong(uSeq);
             boolean post = joinRequestService.postJoinRequest(uSeqLong, joinRequestControlDTO);
             if(post){
@@ -48,15 +53,21 @@ public class JoinRequestController {
         try{
             Long uSeqLong = Long.parseLong(uSeq);
 
-            // 1. 스터디그룹 인원 만들어지면 작성 예정) 스터디그룹인원에 데이터 추가 (해당 스터디에 이미 참여된 유저인지 확인할 것)
+            System.out.println("joinRequestControlDTO.getUSeq() " + joinRequestControlDTO.getUSeq() + " " + joinRequestControlDTO.getSgSeq());
 
+            // 1. 스터디그룹 인원 데이터 추가 (해당 스터디에 이미 참여된 유저인지 확인할 것)
+            boolean create = groupMembersService.createMember(uSeqLong, joinRequestControlDTO.getSgSeq(), joinRequestControlDTO.getUSeq());
+            if(!create){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to accept join request");
+            }
             // 2. 알림 테이블에서 해당 데이터 삭제
             boolean delete = joinRequestService.deleteByjSeq(uSeqLong, jSeq);
             if(delete){
-                return new ResponseEntity<>("join request deleted successfully", HttpStatus.CREATED);
+                return new ResponseEntity<>("Join request accepted successfully", HttpStatus.CREATED);
             }else{
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to accept join request");
             }
+
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to accept join request");
         }

@@ -26,5 +26,4 @@ public interface GroupMemberRepository extends JpaRepository<GroupMembersEntity,
     @Modifying
     @Transactional
     void deletedByUSeq(long uSeq);
-
 }

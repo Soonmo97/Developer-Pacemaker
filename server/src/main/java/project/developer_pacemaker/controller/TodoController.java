@@ -32,6 +32,7 @@ public class TodoController {
     public ResponseEntity<String> saveTodo(@AuthenticationPrincipal String uSeq, @PathVariable long pSeq, @RequestBody TodoCreateDTO todo){
         try {
             Long uSeqLong = Long.parseLong(uSeq);
+            System.out.println("=========="+todo.getContent());
             boolean save = todoService.saveTodo(uSeqLong, pSeq, todo );
             if(save){
                 return new ResponseEntity<>("Your todo saved successfully", HttpStatus.CREATED);
