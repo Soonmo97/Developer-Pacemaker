@@ -88,6 +88,7 @@ public class StudyGroupController {
 
             StudyGroupEntity createStudyGroup = studyGroupService.create(studyGroup);
             StudyGroupDTO responseStudyGroupDTO = studyGroupDTO.builder()
+                .sgSeq(createStudyGroup.getSgSeq())
                 .name(createStudyGroup.getName())
                 .goal(createStudyGroup.getGoal())
                 .uSeq(createStudyGroup.getUser().getUSeq())
@@ -125,6 +126,7 @@ public class StudyGroupController {
         try {
             StudyGroupEntity studyGroupEntity = studyGroupService.updateName(uSeq, studyGroupDTO);
             StudyGroupDTO resStudyGroupDTO = StudyGroupDTO.builder()
+                .sgSeq(studyGroupEntity.getSgSeq())
                 .name(studyGroupEntity.getName())
                 .uSeq(studyGroupEntity.getUser().getUSeq())
                 .registered(studyGroupEntity.getRegistered())
@@ -146,6 +148,7 @@ public class StudyGroupController {
         try {
             StudyGroupEntity studyGroupEntity = studyGroupService.updateGoal(uSeq, studyGroupDTO);
             StudyGroupDTO resStudyGroupDTO = StudyGroupDTO.builder()
+                .sgSeq(studyGroupEntity.getSgSeq())
                 .goal(studyGroupEntity.getName())
                 .uSeq(studyGroupEntity.getUser().getUSeq())
                 .registered(studyGroupEntity.getRegistered())
@@ -183,6 +186,7 @@ public class StudyGroupController {
         try {
             StudyGroupEntity studyGroupEntity = studyGroupService.updateStatus(uSeq, studyGroupDTO);
             StudyGroupDTO resStudyGroupDTO = StudyGroupDTO.builder()
+                .sgSeq(studyGroupEntity.getSgSeq())
                 .status(studyGroupEntity.isStatus())
                 .uSeq(studyGroupEntity.getUser().getUSeq())
                 .registered(studyGroupEntity.getRegistered())
