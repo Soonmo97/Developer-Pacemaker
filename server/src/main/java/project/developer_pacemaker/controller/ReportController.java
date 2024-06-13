@@ -38,6 +38,7 @@ public class ReportController {
             reportService.saveReport(uSeqLong, report);
             return new ResponseEntity<>("Your report saved successfully", HttpStatus.CREATED);
         }catch (Exception e){
+            System.out.println("e=========="+e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save report data");
         }
 

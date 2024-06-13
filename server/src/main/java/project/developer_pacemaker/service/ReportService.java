@@ -34,16 +34,21 @@ public class ReportService {
     }
 
     public void saveReport(Long uSeq, ReportCreateDTO report) {
-        ReportEntity reportEntity = new ReportEntity();
-        reportEntity.setTitle(report.getTitle());
-        reportEntity.setContent(report.getContent());
+        try {
+            ReportEntity reportEntity = new ReportEntity();
+            reportEntity.setTitle(report.getTitle());
+            reportEntity.setContent(report.getContent());
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUSeq(uSeq);
+            UserEntity userEntity = new UserEntity();
+            userEntity.setUSeq(uSeq);
 
-        reportEntity.setUser(userEntity);
+            reportEntity.setUser(userEntity);
 
-        reportRepository.save(reportEntity);
+            reportRepository.save(reportEntity);
+        }catch (Exception e){
+            System.out.println("sssssss:"+e.getMessage());
+        }
+
     }
 
     public boolean updateReportByrSeq(long rSeq, long currentUSeq, ReportCreateDTO report) {

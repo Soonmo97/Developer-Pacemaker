@@ -64,5 +64,9 @@ public class UserEntity {
     @JsonBackReference
     private List<PlannerEntity> plannerEntities;
 
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    private List<GroupPlannerEntity> groupPlannerEntityList;
+
 }
 
