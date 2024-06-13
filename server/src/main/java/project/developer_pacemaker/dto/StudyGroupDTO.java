@@ -8,8 +8,8 @@ import lombok.Getter;
 public class StudyGroupDTO {
     private long sgSeq;
     private String name;
-    private int max;
     private long uSeq;
     private String registered;
     private String goal;
+    private boolean status;
 }

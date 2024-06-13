@@ -44,6 +44,21 @@ public class StudyGroupController {
         }
     }
 
+    @Operation(summary = "모집 중인 스터디그룹 전체 조회", description = "모집 중인 스터디그룹 전체 조회 API 입니다.")
+    @GetMapping("/openAll")
+    public ResponseEntity<?> getOpenAll() {
+        try {
+            List <StudyGroupEntity> studyGroups = studyGroupService.getOpenAll();
+            return ResponseEntity.ok(studyGroups);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+    }
+
     @Operation(summary = "내 스터디그룹 전체 조회", description = "내 스터디그룹 전체 조회 API 입니다.")
     @GetMapping("/me")
     public ResponseEntity<?> getMyAll(@AuthenticationPrincipal String uSeq) {
@@ -73,6 +88,7 @@ public class StudyGroupController {
 
             StudyGroupEntity createStudyGroup = studyGroupService.create(studyGroup);
             StudyGroupDTO responseStudyGroupDTO = studyGroupDTO.builder()
+                .sgSeq(createStudyGroup.getSgSeq())
                 .name(createStudyGroup.getName())
                 .goal(createStudyGroup.getGoal())
                 .uSeq(createStudyGroup.getUser().getUSeq())
@@ -110,6 +126,7 @@ public class StudyGroupController {
         try {
             StudyGroupEntity studyGroupEntity = studyGroupService.updateName(uSeq, studyGroupDTO);
             StudyGroupDTO resStudyGroupDTO = StudyGroupDTO.builder()
+                .sgSeq(studyGroupEntity.getSgSeq())
                 .name(studyGroupEntity.getName())
                 .uSeq(studyGroupEntity.getUser().getUSeq())
                 .registered(studyGroupEntity.getRegistered())
@@ -131,6 +148,7 @@ public class StudyGroupController {
         try {
             StudyGroupEntity studyGroupEntity = studyGroupService.updateGoal(uSeq, studyGroupDTO);
             StudyGroupDTO resStudyGroupDTO = StudyGroupDTO.builder()
+                .sgSeq(studyGroupEntity.getSgSeq())
                 .goal(studyGroupEntity.getName())
                 .uSeq(studyGroupEntity.getUser().getUSeq())
                 .registered(studyGroupEntity.getRegistered())
@@ -144,6 +162,45 @@ public class StudyGroupController {
             );
         }
     }
+
+
+    @Operation(summary = "스터디그룹 모집여부 조회", description = "스터디그룹 모집여부 조회 API 입니다.")
+    @GetMapping("/status/{sgSeq}")
+    public ResponseEntity<?> getStatus(@PathVariable String sgSeq) {
+        try {
+            boolean isDuplicate = studyGroupService.getStatus(Long.parseLong(sgSeq));
+            return ResponseEntity.ok(isDuplicate);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+    }
+
+
+    @Operation(summary = "스터디그룹 모집여부 수정(활성, 비활성화)", description = "스터디그룹 모집여부 수정(활성, 비활성화) API 입니다.")
+    @PatchMapping("/status")
+    public ResponseEntity<?> patchStatus(@AuthenticationPrincipal String uSeq,
+                                       @RequestBody StudyGroupDTO studyGroupDTO) {
+        try {
+            StudyGroupEntity studyGroupEntity = studyGroupService.updateStatus(uSeq, studyGroupDTO);
+            StudyGroupDTO resStudyGroupDTO = StudyGroupDTO.builder()
+                .sgSeq(studyGroupEntity.getSgSeq())
+                .status(studyGroupEntity.isStatus())
+                .uSeq(studyGroupEntity.getUser().getUSeq())
+                .registered(studyGroupEntity.getRegistered())
+                .build();
+
+            return ResponseEntity.ok(resStudyGroupDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+    }
+
 
 
     @Operation(summary = "스터디그룹 삭제", description = "스터디그룹 삭제 API 입니다.")

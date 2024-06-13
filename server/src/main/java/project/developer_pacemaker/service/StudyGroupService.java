@@ -86,6 +86,20 @@ public class StudyGroupService {
         return null;
     }
 
+    public StudyGroupEntity updateStatus(final String uSeq, final StudyGroupDTO studyGroupDTO) {
+        StudyGroupEntity studyGroup= studyGroupRepository.findById(studyGroupDTO.getSgSeq()).orElseThrow(()->new RuntimeException("RuntimeException"));
+        if (studyGroup != null) {
+            if (Long.parseLong(uSeq) != studyGroup.getUser().getUSeq()) {
+                log.warn("스터디그룹의 그룹장이 아닙니다. {}", uSeq);
+                throw new RuntimeException("스터디그룹의 그룹장이 아닙니다.");
+            }
+            studyGroup.setStatus(!studyGroup.isStatus());
+            return studyGroupRepository.save(studyGroup);
+        }
+        return null;
+    }
+
+
     public Boolean isDuplicateName(final String name) {
         return studyGroupRepository.existsByName(name);
     }
@@ -104,9 +118,24 @@ public class StudyGroupService {
         return studyGroupRepository.findAll();
     }
 
-    public List<StudyGroupEntity> myGetAll(String uSeq) {
+    public List<StudyGroupEntity> getOpenAll() {
+            List<StudyGroupEntity> studyGroups = studyGroupRepository.findAll();
+            for (StudyGroupEntity studyGroup : studyGroups) {
+                if(studyGroup.isStatus() == false) {
+                    studyGroups.remove(studyGroup);
+                }
+            }
+            return studyGroups;
+    }
+
+    public List<StudyGroupEntity> myGetAll(final String uSeq) {
         UserEntity user = findByUSeq(uSeq);
         return studyGroupRepository.findByUser(user);
+    }
+
+    public boolean getStatus(final long sgSeq) {
+        StudyGroupEntity studyGroup = studyGroupRepository.findById(sgSeq).orElseThrow(()-> new RuntimeException("RuntimeException"));
+        return studyGroup.isStatus();
     }
 
 }
