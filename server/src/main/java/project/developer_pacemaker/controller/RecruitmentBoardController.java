@@ -26,13 +26,11 @@ public class RecruitmentBoardController {
     @Operation(summary = "스터디 모집 게시글 작성", description = "스터디 모집 게시판 작성 API 입니다.")
     @PostMapping
     public ResponseEntity<RecruitmentBoardEntity> createRecruitmentBoard(@RequestBody RecruitmentBoardDTO recruitmentBoardDTO) {
-        log.info("DTO: {}", recruitmentBoardDTO);  // DTO 값 로그 추가
         RecruitmentBoardEntity recruitmentBoard = RecruitmentBoardEntity.builder()
                 .studyGroup(StudyGroupEntity.builder().sgSeq(recruitmentBoardDTO.getSg_seq()).build())
                 .content(recruitmentBoardDTO.getContent())
                 .title((recruitmentBoardDTO.getTitle()))
                 .build();
-        log.info("DTO: {}",recruitmentBoardDTO);
         try {
             RecruitmentBoardEntity createdBoard = recruitmentBoardService.createRecruitmentBoard(recruitmentBoard, recruitmentBoardDTO.getU_seq());
             return ResponseEntity.ok(createdBoard);
@@ -56,8 +54,11 @@ public class RecruitmentBoardController {
         }
     }
     @Operation(summary = "스터디 모집 게시글 수정", description = "스터디 모집 게시글 수정 API 입니다.")
-    @PutMapping("/{id}")
-    public ResponseEntity<RecruitmentBoardEntity> updateRecruitmentBoard(@PathVariable Long id, @RequestBody RecruitmentBoardEntity recruitmentBoardDetails, @RequestParam String uSeq){
+    @PatchMapping("/{id}")
+    public ResponseEntity<RecruitmentBoardEntity> updateRecruitmentBoard(
+            @PathVariable Long id,
+            @RequestBody RecruitmentBoardEntity recruitmentBoardDetails,
+            @RequestHeader("uSeq") String uSeq){
         // @PathVariable은 URL에서 {id} 에 해당하는 부분을 추출
         return ResponseEntity.ok(recruitmentBoardService.updateRecruitmentBoard(id, recruitmentBoardDetails, uSeq));
     }
