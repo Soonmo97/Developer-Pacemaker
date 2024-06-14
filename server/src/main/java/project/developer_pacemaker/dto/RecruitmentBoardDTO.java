@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RecruitmentBoardDTO {
     private long sg_seq;
-    private long u_seq;
     private String content;
     private String title;
 }

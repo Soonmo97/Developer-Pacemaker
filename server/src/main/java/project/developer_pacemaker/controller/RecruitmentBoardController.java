@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.RecruitmentBoardDTO;
 import project.developer_pacemaker.entity.RecruitmentBoardEntity;
@@ -25,14 +26,14 @@ public class RecruitmentBoardController {
 
     @Operation(summary = "스터디 모집 게시글 작성", description = "스터디 모집 게시판 작성 API 입니다.")
     @PostMapping
-    public ResponseEntity<RecruitmentBoardEntity> createRecruitmentBoard(@RequestBody RecruitmentBoardDTO recruitmentBoardDTO) {
+    public ResponseEntity<RecruitmentBoardEntity> createRecruitmentBoard(@AuthenticationPrincipal String uSeq, @RequestBody RecruitmentBoardDTO recruitmentBoardDTO) {
         RecruitmentBoardEntity recruitmentBoard = RecruitmentBoardEntity.builder()
                 .studyGroup(StudyGroupEntity.builder().sgSeq(recruitmentBoardDTO.getSg_seq()).build())
                 .content(recruitmentBoardDTO.getContent())
                 .title((recruitmentBoardDTO.getTitle()))
                 .build();
         try {
-            RecruitmentBoardEntity createdBoard = recruitmentBoardService.createRecruitmentBoard(recruitmentBoard, recruitmentBoardDTO.getU_seq());
+            RecruitmentBoardEntity createdBoard = recruitmentBoardService.createRecruitmentBoard(recruitmentBoard, Long.parseLong(uSeq));
             return ResponseEntity.ok(createdBoard);
         } catch (RuntimeException e) {
             return ResponseEntity.status(403).body(null);
