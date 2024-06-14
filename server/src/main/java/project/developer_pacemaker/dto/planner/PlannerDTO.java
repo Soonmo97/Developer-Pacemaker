@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -11,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class PlannerDTO {
     private long pSeq;
-    private String registered;
+    private LocalDate registered;
     private List<TodoDTO> todoDTOList;
 }

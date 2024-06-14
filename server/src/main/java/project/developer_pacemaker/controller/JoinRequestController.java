@@ -35,7 +35,6 @@ public class JoinRequestController {
     @PostMapping()
     public ResponseEntity<String> postJoinRequest(@AuthenticationPrincipal String uSeq, @RequestBody JoinRequestControlDTO joinRequestControlDTO){
         try {
-            System.out.println("+==================="+joinRequestControlDTO.getUSeq());
             Long uSeqLong = Long.parseLong(uSeq);
             boolean post = joinRequestService.postJoinRequest(uSeqLong, joinRequestControlDTO);
             if(post){
@@ -52,8 +51,6 @@ public class JoinRequestController {
     public ResponseEntity<String> acceptJoinRequest(@AuthenticationPrincipal String uSeq, @RequestBody JoinRequestControlDTO joinRequestControlDTO, @PathVariable long jSeq){
         try{
             Long uSeqLong = Long.parseLong(uSeq);
-
-            System.out.println("joinRequestControlDTO.getUSeq() " + joinRequestControlDTO.getUSeq() + " " + joinRequestControlDTO.getSgSeq());
 
             // 1. 스터디그룹 인원 데이터 추가 (해당 스터디에 이미 참여된 유저인지 확인할 것)
             boolean create = groupMembersService.createMember(uSeqLong, joinRequestControlDTO.getSgSeq(), joinRequestControlDTO.getUSeq());

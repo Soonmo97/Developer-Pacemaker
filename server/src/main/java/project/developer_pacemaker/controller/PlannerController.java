@@ -7,6 +7,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.planner.PlannerCreateDTO;
 import project.developer_pacemaker.dto.planner.PlannerDTO;
+import project.developer_pacemaker.dto.planner.TodoDTO;
+import project.developer_pacemaker.entity.PlannerEntity;
 import project.developer_pacemaker.service.PlannerService;
 
 import java.util.List;
@@ -19,11 +21,11 @@ public class PlannerController {
     PlannerService plannerService;
 
     @GetMapping()
-    public ResponseEntity<?> getMyPlanner(@AuthenticationPrincipal String uSeq){
+    public ResponseEntity<?> getMyPlanner(@AuthenticationPrincipal String uSeq, @RequestParam String date){
         try{
-            Long uSeqLong = Long.parseLong(uSeq);
-            List<PlannerDTO> plannerList = plannerService.getPlannerByuSeq(uSeqLong);
-            return new ResponseEntity<>(plannerList, HttpStatus.OK);
+            Long  uSeqLong = Long.parseLong(uSeq);
+            List<TodoDTO> planner= plannerService.getPlannerByDate(uSeqLong, date);
+            return new ResponseEntity<>(planner, HttpStatus.OK);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to load planner data");
         }
@@ -34,25 +36,25 @@ public class PlannerController {
         // 테스트 데이터 ("todoDTOList" 값 필수 -> [] 빈 배열이라도 보낼 것)
         // todoDTOList 안의 content만 필수(나머지는 선택)
         // 예시
-        // {
-        //  "todoDTOList": [
-        //    {
-        //      "content": "Study Java3",
-        //      "duration":3,
-        //      "isCompleted": true
-        //    },
-        //    {
-        //      "content": "Read Spring Boot documentation3"
-        //    }
-        //  ]
-        //}
+//         {
+//          "todoDTOList": [
+//            {
+//              "content": "Study Java3",
+//              "duration":3,
+//              "isCompleted": true
+//            },
+//            {
+//              "content": "Read Spring Boot documentation3"
+//            }
+//          ]
+//        }
         try{
             Long uSeqLong = Long.parseLong(uSeq);
             plannerService.savePlanner(uSeqLong, planner);
             return new ResponseEntity<>("Your planner saved successfully", HttpStatus.CREATED);
         }catch (Exception e){
-            // return ResponseEntity.badRequest().body(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save planner data");
+            return ResponseEntity.badRequest().body(e.getMessage());
+            // return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save planner data");
         }
     }
 

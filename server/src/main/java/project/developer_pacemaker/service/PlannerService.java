@@ -16,7 +16,9 @@ import project.developer_pacemaker.repository.PlannerRepository;
 import project.developer_pacemaker.repository.TodoRepository;
 import project.developer_pacemaker.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -107,6 +109,32 @@ public class PlannerService {
         }catch (Exception e){
             System.out.println(e.getMessage());
             return false;
+        }
+    }
+
+    public List<TodoDTO> getPlannerByDate(Long uSeq, String date) {
+        try {
+            UserEntity userEntity = userRepository.findById(uSeq)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            String cleanedDate = date.trim().replaceAll("[^\\d-]", "");
+
+            LocalDate parsedDate = LocalDate.parse(cleanedDate);
+            Optional<PlannerEntity> plannerEntityOptional = plannerRepository.findByUser_uSeqAndIsDeletedAndRegistered(uSeq, false, parsedDate);
+            if(plannerEntityOptional.isPresent()){
+                PlannerEntity plannerEntity = plannerEntityOptional.get();
+                if(plannerEntity.getUser().getUSeq()!=uSeq){
+                    return null;
+                }
+                List<TodoEntity> todoEntities = todoRepository.findByPlanner(plannerEntity);
+                return todoEntities.stream()
+                        .map(todo -> new TodoDTO(todo.getTSeq(),todo.getContent(), todo.getDuration(), todo.isCompleted()))
+                        .collect(Collectors.toList());
+            }
+            return null;
+        }catch (Exception e){
+            System.out.println("e::"+e.getMessage());
+            return null;
         }
     }
 }

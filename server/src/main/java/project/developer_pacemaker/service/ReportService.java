@@ -46,7 +46,7 @@ public class ReportService {
 
             reportRepository.save(reportEntity);
         }catch (Exception e){
-            System.out.println("sssssss:"+e.getMessage());
+            System.out.println(e.getMessage());
         }
 
     }
