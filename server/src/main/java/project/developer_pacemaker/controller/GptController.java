@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import project.developer_pacemaker.dto.gpt.GptDTO;
+import project.developer_pacemaker.dto.gpt.GptPromptDTO;
 import project.developer_pacemaker.dto.gpt.GptRequestDTO;
 import project.developer_pacemaker.dto.gpt.GptResponseDTO;
 import project.developer_pacemaker.service.GptService;
@@ -32,9 +33,9 @@ public class GptController {
     @Autowired
     GptService gptService;
 
-    @GetMapping("/ask")
-    public String chat(@RequestParam(name = "prompt")String prompt){
-        GptRequestDTO request = new GptRequestDTO(model, prompt);
+    @PostMapping("/ask")
+    public String chat(@RequestBody GptPromptDTO prompt){
+        GptRequestDTO request = new GptRequestDTO(model, prompt.getPrompt());
         GptResponseDTO chatGPTResponse =  template.postForObject(apiURL, request, GptResponseDTO.class);
         return chatGPTResponse.getChoices().get(0).getMessage().getContent();
     }
