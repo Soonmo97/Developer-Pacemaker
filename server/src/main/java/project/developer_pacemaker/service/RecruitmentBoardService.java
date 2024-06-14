@@ -21,13 +21,19 @@ public class RecruitmentBoardService {
         this.recruitmentBoardRepository = recruitmentBoardRepository;
         this.studyGroupRepository = studyGroupRepository;
     }
-    public RecruitmentBoardEntity createRecruitmentBoard(RecruitmentBoardEntity recruitmentBoard) {
+    public RecruitmentBoardEntity createRecruitmentBoard(RecruitmentBoardEntity recruitmentBoard, long u_seq) {
         // StudyGroupEntity를 이용하여 name을 설정
         StudyGroupEntity studyGroup = recruitmentBoard.getStudyGroup();
         if (studyGroup != null) {
             Optional<StudyGroupEntity> optionalStudyGroup = studyGroupRepository.findById(studyGroup.getSgSeq());
             if (optionalStudyGroup.isPresent()) {
+                StudyGroupEntity foundStudyGroup = optionalStudyGroup.get();
+                if(foundStudyGroup.getUser().getUSeq() != u_seq){
+                    throw new RuntimeException("사용자가 스터디 그룹장이 아닙니다.");
+                }
                 recruitmentBoard.setTitle(optionalStudyGroup.get().getName());
+            } else{
+                throw new RuntimeException("스터디 그룹을 찾을 수 없습니다.");
             }
         }
         return recruitmentBoardRepository.save(recruitmentBoard);
@@ -41,14 +47,14 @@ public class RecruitmentBoardService {
         return recruitmentBoardRepository.findByTitle(title);
     }
 
-    public RecruitmentBoardEntity updateRecruitmentBoard(Long id, RecruitmentBoardEntity recruitmentBoardDetails, String u_Seq){
+    public RecruitmentBoardEntity updateRecruitmentBoard(Long id, RecruitmentBoardEntity recruitmentBoardDetails, String uSeq){
         Optional<RecruitmentBoardEntity> optionalRecruitmentBoard = recruitmentBoardRepository.findById(id);
         if(optionalRecruitmentBoard.isPresent()){ // 값이 있으면 true, 없으면 false
             RecruitmentBoardEntity recruitmentBoard = optionalRecruitmentBoard.get(); // 값이 있으면
             StudyGroupEntity studyGroup = recruitmentBoard.getStudyGroup();
             // 스터디 그룹장이 작성자인지
-            if(studyGroup != null && Long.parseLong(u_Seq) != studyGroup.getUser().getUSeq()){
-                log.warn("스터디 그룹장이 아닙니다. {}", u_Seq);
+            if(studyGroup != null && Long.parseLong(uSeq) != studyGroup.getUser().getUSeq()){
+                log.warn("스터디 그룹장이 아닙니다. {}", uSeq);
                 throw new RuntimeException("스터디 그룹의 그룹장이 아닙니다.");
             }
             // if문 통과하면 게시글 업데이트

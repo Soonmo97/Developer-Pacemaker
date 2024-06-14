@@ -1,6 +1,7 @@
 package project.developer_pacemaker.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import project.developer_pacemaker.service.RecruitmentBoardService;
 import java.util.List;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/recruitmentBoard")
 public class RecruitmentBoardController {
 
@@ -23,12 +25,18 @@ public class RecruitmentBoardController {
 
     @Operation(summary = "스터디 모집 게시글 작성", description = "스터디 모집 게시판 작성 API 입니다.")
     @PostMapping
-    public RecruitmentBoardEntity createRecruitmentBoard(@RequestBody RecruitmentBoardDTO recruitmentBoardDTO){
+    public ResponseEntity<RecruitmentBoardEntity> createRecruitmentBoard(@RequestBody RecruitmentBoardDTO recruitmentBoardDTO) {
         RecruitmentBoardEntity recruitmentBoard = RecruitmentBoardEntity.builder()
-                .studyGroup(StudyGroupEntity.builder().sgSeq(recruitmentBoardDTO.getSgSeq()).build())
+                .studyGroup(StudyGroupEntity.builder().sgSeq(recruitmentBoardDTO.getSg_seq()).build())
                 .content(recruitmentBoardDTO.getContent())
+                .title((recruitmentBoardDTO.getTitle()))
                 .build();
-        return recruitmentBoardService.createRecruitmentBoard(recruitmentBoard);
+        try {
+            RecruitmentBoardEntity createdBoard = recruitmentBoardService.createRecruitmentBoard(recruitmentBoard, recruitmentBoardDTO.getU_seq());
+            return ResponseEntity.ok(createdBoard);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(403).body(null);
+        }
     }
     @Operation(summary = "스터디 모집 게시글 조회", description = "스터디 모집 게시판 조회 API 입니다.")
     @GetMapping
@@ -46,8 +54,11 @@ public class RecruitmentBoardController {
         }
     }
     @Operation(summary = "스터디 모집 게시글 수정", description = "스터디 모집 게시글 수정 API 입니다.")
-    @PutMapping("/{id}")
-    public ResponseEntity<RecruitmentBoardEntity> updateRecruitmentBoard(@PathVariable Long id, @RequestBody RecruitmentBoardEntity recruitmentBoardDetails, @RequestParam String uSeq){
+    @PatchMapping("/{id}")
+    public ResponseEntity<RecruitmentBoardEntity> updateRecruitmentBoard(
+            @PathVariable Long id,
+            @RequestBody RecruitmentBoardEntity recruitmentBoardDetails,
+            @RequestHeader("uSeq") String uSeq){
         // @PathVariable은 URL에서 {id} 에 해당하는 부분을 추출
         return ResponseEntity.ok(recruitmentBoardService.updateRecruitmentBoard(id, recruitmentBoardDetails, uSeq));
     }
