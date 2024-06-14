@@ -2,6 +2,7 @@ package project.developer_pacemaker.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import project.developer_pacemaker.dto.RecruitmentBoardDTO;
 import project.developer_pacemaker.entity.RecruitmentBoardEntity;
 import project.developer_pacemaker.entity.StudyGroupEntity;
 import project.developer_pacemaker.repository.RecruitmentBoardRepository;
@@ -47,7 +48,7 @@ public class RecruitmentBoardService {
         return recruitmentBoardRepository.findByTitle(title);
     }
 
-    public RecruitmentBoardEntity updateRecruitmentBoard(Long id, RecruitmentBoardEntity recruitmentBoardDetails, String uSeq){
+    public RecruitmentBoardEntity updateRecruitmentBoard(Long id, RecruitmentBoardDTO recruitmentBoardDetails, String uSeq){
         Optional<RecruitmentBoardEntity> optionalRecruitmentBoard = recruitmentBoardRepository.findById(id);
         if(optionalRecruitmentBoard.isPresent()){ // 값이 있으면 true, 없으면 false
             RecruitmentBoardEntity recruitmentBoard = optionalRecruitmentBoard.get(); // 값이 있으면

@@ -55,12 +55,12 @@ public class RecruitmentBoardController {
         }
     }
     @Operation(summary = "스터디 모집 게시글 수정", description = "스터디 모집 게시글 수정 API 입니다.")
-    @PatchMapping("/{id}")
+    @PatchMapping("/{rb_seq}")
     public ResponseEntity<RecruitmentBoardEntity> updateRecruitmentBoard(
-            @PathVariable Long id,
-            @RequestBody RecruitmentBoardEntity recruitmentBoardDetails,
-            @RequestHeader("uSeq") String uSeq){
-        // @PathVariable은 URL에서 {id} 에 해당하는 부분을 추출
+            @AuthenticationPrincipal String uSeq,
+            @PathVariable Long id,  // @PathVariable은 URL에서 {id} 에 해당하는 부분 추출
+            @RequestBody RecruitmentBoardDTO recruitmentBoardDetails)
+            {
         return ResponseEntity.ok(recruitmentBoardService.updateRecruitmentBoard(id, recruitmentBoardDetails, uSeq));
     }
 
