@@ -13,4 +13,5 @@ public class RecruitmentBoardDTO {
     private long sg_seq;
     private String content;
     private String title;
+    private String name;
 }

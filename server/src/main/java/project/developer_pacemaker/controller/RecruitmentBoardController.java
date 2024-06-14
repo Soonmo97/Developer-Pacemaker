@@ -23,14 +23,14 @@ public class RecruitmentBoardController {
     public RecruitmentBoardController(RecruitmentBoardService recruitmentBoardService) {
         this.recruitmentBoardService = recruitmentBoardService;
     }
-
-    @Operation(summary = "스터디 모집 게시글 작성", description = "스터디 모집 게시판 작성 API 입니다.")
+    @Operation(summary = "스터디 모집 게시글 작성 {sg_seq}, {content}, {name}", description = "스터디 모집 게시판 작성 API 입니다. {sg_seq}, {content}, {name} | name이 사용자가 입력하는 제목입니다.")
     @PostMapping
     public ResponseEntity<RecruitmentBoardEntity> createRecruitmentBoard(@AuthenticationPrincipal String uSeq, @RequestBody RecruitmentBoardDTO recruitmentBoardDTO) {
         RecruitmentBoardEntity recruitmentBoard = RecruitmentBoardEntity.builder()
                 .studyGroup(StudyGroupEntity.builder().sgSeq(recruitmentBoardDTO.getSg_seq()).build())
                 .content(recruitmentBoardDTO.getContent())
                 .title((recruitmentBoardDTO.getTitle()))
+                .name(recruitmentBoardDTO.getName())
                 .build();
         try {
             RecruitmentBoardEntity createdBoard = recruitmentBoardService.createRecruitmentBoard(recruitmentBoard, Long.parseLong(uSeq));

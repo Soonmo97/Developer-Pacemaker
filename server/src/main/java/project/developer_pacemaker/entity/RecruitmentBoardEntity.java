@@ -48,5 +48,8 @@ public class RecruitmentBoardEntity {
     private boolean isDeleted;
 
     @Column(name = "title", nullable = false, length = 30)
-    private String title;  // 스터디그룹의 name을 저장하기 위한 컬럼
+    private String title;  // 스터디그룹의 name을 가져옴
+
+    @Column(name = "name", nullable = false, length = 30)
+    private String name;  // 사용자가 직접 입력하는 제목
 }
