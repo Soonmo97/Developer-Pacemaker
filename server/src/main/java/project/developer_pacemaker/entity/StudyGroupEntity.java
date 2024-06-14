@@ -70,4 +70,8 @@ public class StudyGroupEntity {
     @OneToMany(mappedBy = "studyGroup")
     @JsonBackReference
     private List<GroupPlannerEntity> groupPlannerEntityList;
+
+    @OneToMany(mappedBy = "studyGroup")
+    @JsonBackReference
+    private List<StudyGroupGrassEntity> studyGroupGrassEntities;
 }
