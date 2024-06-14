@@ -26,7 +26,7 @@ public class UserController {
         this.tokenProvider = tokenProvider;
     }
 
-    @Operation(summary = "회원가입", description = "회원가입 API 입니다.")
+    @Operation(summary = "회원가입", description = "회원가입 API 입니다. {nickname, email, pw}")
     @PostMapping()
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         try {
@@ -88,7 +88,7 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "로그인", description = "로그인 API 입니다.")
+    @Operation(summary = "로그인", description = "로그인 API 입니다. {email, pw}")
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserDTO userDTO) {
         try {
@@ -118,7 +118,7 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "비밀번호 찾기(재설정)", description = "비밀번호 찾기(재설정) API 입니다.")
+    @Operation(summary = "비밀번호 찾기(재설정)", description = "비밀번호 찾기(재설정) API 입니다. {pw}")
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody UserDTO userDTO
     ) {
@@ -162,7 +162,7 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "마이페이지 닉네임 변경", description = "마이페이지 닉네임 변경 API 입니다.")
+    @Operation(summary = "마이페이지 닉네임 변경", description = "마이페이지 닉네임 변경 API 입니다. {nickname}")
     @PatchMapping("/nickname")
     public ResponseEntity<?> patchNickname(@AuthenticationPrincipal String uSeq,
                                            @RequestBody UserDTO userDTO) {
@@ -184,7 +184,7 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "마이페이지 비밀번호 변경(재설정)", description = "마이페이지 비밀번호 변경(재설정) API 입니다.")
+    @Operation(summary = "마이페이지 비밀번호 변경(재설정)", description = "마이페이지 비밀번호 변경(재설정) API 입니다. {pw}")
     @PatchMapping("/password")
     public ResponseEntity<?> resetPassword(@AuthenticationPrincipal String uSeq,
                                                 @RequestBody UserDTO userDTO
@@ -221,7 +221,7 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "비밀번호 비교값 반환", description = "비밀번호 비교값 반환 API 입니다.")
+    @Operation(summary = "비밀번호 비교값 반환", description = "비밀번호 비교값 반환 API 입니다. {pw}")
     @PostMapping("/comparePw")
     public ResponseEntity<?> comparePw(@AuthenticationPrincipal String uSeq, @RequestBody UserDTO userDTO) {
         try {

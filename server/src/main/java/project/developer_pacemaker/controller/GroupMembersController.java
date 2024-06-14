@@ -41,7 +41,7 @@ public class GroupMembersController {
         }
     }
 
-    @Operation(summary = "스터디그룹 멤버 강퇴(그룹장)", description = "스터디그룹 멤버 강퇴 API 입니다.")
+    @Operation(summary = "스터디그룹 멤버 강퇴(그룹장)", description = "스터디그룹 멤버 강퇴 API 입니다. {sgSeq, uSeq}")
     @DeleteMapping("/kick")
     public ResponseEntity<?> kickMember(
         @AuthenticationPrincipal String uSeq,
@@ -66,7 +66,7 @@ public class GroupMembersController {
 
     }
 
-    @Operation(summary = "스터디그룹 멤버 추가(신청 수락)", description = "스터디그룹 멤버 추가 API 입니다.")
+    @Operation(summary = "스터디그룹 멤버 추가(신청 수락)", description = "스터디그룹 멤버 추가 API 입니다. {sgSeq, uSeq}")
     @PostMapping()
     public ResponseEntity<?> plusMember(@AuthenticationPrincipal String uSeq,
                                         @RequestBody GroupMembersDTO groupMembersDTO) {
@@ -83,7 +83,7 @@ public class GroupMembersController {
 
     }
 
-    @Operation(summary = "스터디그룹 탈퇴", description = "스터디그룹 탈퇴 API 입니다.")
+    @Operation(summary = "스터디그룹 탈퇴", description = "스터디그룹 탈퇴 API 입니다. {sgSeq}")
     @DeleteMapping()
     public ResponseEntity<?> deleteMember(@AuthenticationPrincipal String uSeq, @RequestBody GroupMembersDTO groupMembersDTO) {
         try {
