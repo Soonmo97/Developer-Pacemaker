@@ -120,7 +120,7 @@ public class StudyGroupController {
         }
     }
 
-    @Operation(summary = "스터디그룹 수정(이름)", description = "스터디그룹 수정(이름) API 입니다.")
+    @Operation(summary = "스터디그룹 수정(이름)", description = "스터디그룹 수정(이름) API 입니다. {sgSeq, name}")
     @PatchMapping("/name")
     public ResponseEntity<?> patchName(@AuthenticationPrincipal String uSeq,
         @RequestBody StudyGroupDTO studyGroupDTO) {
@@ -142,7 +142,7 @@ public class StudyGroupController {
         }
     }
 
-    @Operation(summary = "스터디그룹 수정(공동목표)", description = "스터디그룹 수정(공동목표) API 입니다.")
+    @Operation(summary = "스터디그룹 수정(공동목표)", description = "스터디그룹 수정(공동목표) API 입니다. {sgSeq, goal}")
     @PatchMapping("/goal")
     public ResponseEntity<?> patchGoal(@AuthenticationPrincipal String uSeq,
                                    @RequestBody StudyGroupDTO studyGroupDTO) {
@@ -180,7 +180,7 @@ public class StudyGroupController {
     }
 
 
-    @Operation(summary = "스터디그룹 모집여부 수정(활성, 비활성화)", description = "스터디그룹 모집여부 수정(활성, 비활성화) API 입니다.")
+    @Operation(summary = "스터디그룹 모집여부 수정(활성, 비활성화)", description = "스터디그룹 모집여부 수정(활성, 비활성화) API 입니다. {sgSeq}")
     @PatchMapping("/status")
     public ResponseEntity<?> patchStatus(@AuthenticationPrincipal String uSeq,
                                        @RequestBody StudyGroupDTO studyGroupDTO) {
@@ -204,7 +204,7 @@ public class StudyGroupController {
 
 
 
-    @Operation(summary = "스터디그룹 삭제", description = "스터디그룹 삭제 API 입니다.")
+    @Operation(summary = "스터디그룹 삭제", description = "스터디그룹 삭제 API 입니다. {sgSeq}")
     @DeleteMapping()
     public ResponseEntity<?> delete(@AuthenticationPrincipal String uSeq,
         @RequestBody StudyGroupDTO studyGroupDTO) {
