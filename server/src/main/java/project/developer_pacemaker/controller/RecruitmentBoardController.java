@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.RecruitmentBoardDTO;
+import project.developer_pacemaker.dto.ResErrorDTO;
 import project.developer_pacemaker.entity.RecruitmentBoardEntity;
 import project.developer_pacemaker.entity.StudyGroupEntity;
 import project.developer_pacemaker.service.RecruitmentBoardService;
@@ -25,18 +26,15 @@ public class RecruitmentBoardController {
     }
     @Operation(summary = "스터디 모집 게시글 작성 {sg_seq}, {content}, {name}", description = "스터디 모집 게시판 작성 API 입니다. {sg_seq}, {content}, {name} | name이 사용자가 입력하는 제목입니다.")
     @PostMapping
-    public ResponseEntity<RecruitmentBoardEntity> createRecruitmentBoard(@AuthenticationPrincipal String uSeq, @RequestBody RecruitmentBoardDTO recruitmentBoardDTO) {
-        RecruitmentBoardEntity recruitmentBoard = RecruitmentBoardEntity.builder()
-                .studyGroup(StudyGroupEntity.builder().sgSeq(recruitmentBoardDTO.getSg_seq()).build())
-                .content(recruitmentBoardDTO.getContent())
-                .title((recruitmentBoardDTO.getTitle()))
-                .name(recruitmentBoardDTO.getName())
-                .build();
+    public ResponseEntity<?> createRecruitmentBoard(@AuthenticationPrincipal String uSeq, @RequestBody RecruitmentBoardDTO recruitmentBoardDTO) {
         try {
-            RecruitmentBoardEntity createdBoard = recruitmentBoardService.createRecruitmentBoard(recruitmentBoard, Long.parseLong(uSeq));
+            RecruitmentBoardEntity createdBoard = recruitmentBoardService.createRecruitmentBoard(recruitmentBoardDTO, Long.parseLong(uSeq));
             return ResponseEntity.ok(createdBoard);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(403).body(null);
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                    .error(e.getMessage())
+                    .build()
+            );
         }
     }
     @Operation(summary = "스터디 모집 게시글 조회", description = "스터디 모집 게시판 조회 API 입니다.")
@@ -46,12 +44,12 @@ public class RecruitmentBoardController {
     }
     @Operation(summary = "스터디 모집 게시글 제목 검색", description = "스터디 모집 게시판 제목 검색 API 입니다.")
     @GetMapping("/search")
-    public ResponseEntity<List<RecruitmentBoardEntity>> getRecruitmentBoardByTitle(@RequestParam String title){
-        List<RecruitmentBoardEntity> recruitmentBoars = recruitmentBoardService.getRecruitmentBoardByTitle(title);
-        if(recruitmentBoars.isEmpty()){
+    public ResponseEntity<List<RecruitmentBoardEntity>> getRecruitmentBoardByName(@RequestParam String name){
+        List<RecruitmentBoardEntity> recruitmentBoard = recruitmentBoardService.getRecruitmentBoardByName(name);
+        if(recruitmentBoard.isEmpty()){
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(recruitmentBoars);
+            return ResponseEntity.ok(recruitmentBoard);
         }
     }
     @Operation(summary = "스터디 모집 게시글 수정", description = "스터디 모집 게시글 수정 API 입니다.")

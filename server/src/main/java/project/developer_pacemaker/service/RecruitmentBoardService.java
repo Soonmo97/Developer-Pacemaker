@@ -22,21 +22,23 @@ public class RecruitmentBoardService {
         this.recruitmentBoardRepository = recruitmentBoardRepository;
         this.studyGroupRepository = studyGroupRepository;
     }
-    public RecruitmentBoardEntity createRecruitmentBoard(RecruitmentBoardEntity recruitmentBoard, long u_seq) {
+    public RecruitmentBoardEntity createRecruitmentBoard(RecruitmentBoardDTO recruitmentBoardDTO, long uSeq) {
         // StudyGroupEntity를 이용하여 name을 설정
-        StudyGroupEntity studyGroup = recruitmentBoard.getStudyGroup();
-        if (studyGroup != null) {
-            Optional<StudyGroupEntity> optionalStudyGroup = studyGroupRepository.findById(studyGroup.getSgSeq());
-            if (optionalStudyGroup.isPresent()) {
-                StudyGroupEntity foundStudyGroup = optionalStudyGroup.get();
-                if(foundStudyGroup.getUser().getUSeq() != u_seq){
-                    throw new RuntimeException("사용자가 스터디 그룹장이 아닙니다.");
-                }
-                recruitmentBoard.setTitle(optionalStudyGroup.get().getName());
-            } else{
-                throw new RuntimeException("스터디 그룹을 찾을 수 없습니다.");
+//        StudyGroupEntity studyGroup = recruitmentBoard.getSgSeq();
+//        if (studyGroup != null) {
+            StudyGroupEntity foundStudyGroup = studyGroupRepository.findById(recruitmentBoardDTO.getSgSeq())
+                    .orElseThrow(()-> new RuntimeException("스터디 그룹을 찾을 수 없습니다."));
+
+            log.info("studyGroup sgSeq: {}", foundStudyGroup.getSgSeq());
+            if(foundStudyGroup.getUser().getUSeq() != uSeq){
+                throw new RuntimeException("사용자가 스터디 그룹장이 아닙니다.");
             }
-        }
+//                recruitmentBoard.setTitle(optionalStudyGroup.get().getName())
+                RecruitmentBoardEntity recruitmentBoard = RecruitmentBoardEntity.builder()
+                .studyGroup(foundStudyGroup)
+                .content(recruitmentBoardDTO.getContent())
+                .name(recruitmentBoardDTO.getName())
+                .build();
         return recruitmentBoardRepository.save(recruitmentBoard);
     }
 
@@ -44,8 +46,8 @@ public class RecruitmentBoardService {
         return recruitmentBoardRepository.findAll();
     }
 
-    public List<RecruitmentBoardEntity> getRecruitmentBoardByTitle(String title){
-        return recruitmentBoardRepository.findByTitle(title);
+    public List<RecruitmentBoardEntity> getRecruitmentBoardByName(String name){
+        return recruitmentBoardRepository.findByName(name);
     }
 
     public RecruitmentBoardEntity updateRecruitmentBoard(Long id, RecruitmentBoardDTO recruitmentBoardDetails, String uSeq){

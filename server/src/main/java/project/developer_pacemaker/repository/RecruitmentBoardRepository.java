@@ -11,6 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface RecruitmentBoardRepository extends JpaRepository<RecruitmentBoardEntity, Long> {
-    @Query("SELECT r FROM RecruitmentBoardEntity r WHERE r.title LIKE %:title% AND r.isDeleted = false")
-    List<RecruitmentBoardEntity> findByTitle(@Param("title") String title);
+    @Query("SELECT r FROM RecruitmentBoardEntity r WHERE r.name LIKE %:name% AND r.isDeleted = false")
+    List<RecruitmentBoardEntity> findByName(@Param("name") String name);
 }
