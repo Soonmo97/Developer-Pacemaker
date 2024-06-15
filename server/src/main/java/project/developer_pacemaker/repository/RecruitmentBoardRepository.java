@@ -13,4 +13,7 @@ import java.util.Optional;
 public interface RecruitmentBoardRepository extends JpaRepository<RecruitmentBoardEntity, Long> {
     @Query("SELECT r FROM RecruitmentBoardEntity r WHERE r.name LIKE %:name% AND r.isDeleted = false")
     List<RecruitmentBoardEntity> findByName(@Param("name") String name);
+
+    @Query("SELECT rb.studyGroup.sgSeq FROM RecruitmentBoardEntity rb")
+    List<Long> findAllSgSeqInRecruitmentBoard();
 }

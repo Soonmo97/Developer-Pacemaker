@@ -86,7 +86,9 @@ public class RecruitmentBoardService {
     public List<StudyGroupDTO> getMyStudyGroups(Long uSeq) {
         UserEntity user = userRepository.findById(uSeq)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + uSeq));
+        List<Long> recruitmentBoardSgSeq = recruitmentBoardRepository.findAllSgSeqInRecruitmentBoard();
         return studyGroupRepository.findByUser(user).stream()
+                .filter(studyGroup -> !recruitmentBoardSgSeq.contains(studyGroup.getSgSeq()))
                 .map(studyGroup -> StudyGroupDTO.builder()
                         .sgSeq(studyGroup.getSgSeq())
                         .name(studyGroup.getName())

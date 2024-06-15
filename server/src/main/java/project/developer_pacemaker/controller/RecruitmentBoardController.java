@@ -81,7 +81,7 @@ public class RecruitmentBoardController {
         List<StudyGroupDTO> studyGroups = recruitmentBoardService.getMyStudyGroups(Long.parseLong(uSeq));
         if(studyGroups.isEmpty()){
             return ResponseEntity.notFound().build();
-        }else {
+        }else{
             return ResponseEntity.ok(studyGroups);
         }
     }
