@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -30,7 +31,7 @@ public class GroupPlannerEntity {
 
     @CreationTimestamp
     @Column(name = "registered", nullable = false)
-    private String registered;
+    private LocalDate registered;
 
     @Column(name = "isDeleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private boolean isDeleted;

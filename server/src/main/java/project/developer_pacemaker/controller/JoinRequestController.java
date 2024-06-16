@@ -1,5 +1,6 @@
 package project.developer_pacemaker.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class JoinRequestController {
     @Autowired
     GroupMembersService groupMembersService;
 
+    @Operation(summary = "가입 신청 리스트 조회", description = "가입 신청 리스트 조회 API 입니다.")
     @GetMapping("/{sgSeq}")
     public ResponseEntity<?> getJoinRequest(@AuthenticationPrincipal String uSeq, @PathVariable long sgSeq){
         try {
@@ -32,6 +34,7 @@ public class JoinRequestController {
         }
     }
 
+    @Operation(summary = "가입 신청 생성", description = "가입 신청 생성 API 입니다.")
     @PostMapping()
     public ResponseEntity<String> postJoinRequest(@AuthenticationPrincipal String uSeq, @RequestBody JoinRequestControlDTO joinRequestControlDTO){
         try {
@@ -47,6 +50,7 @@ public class JoinRequestController {
         }
     }
 
+    @Operation(summary = "가입 신청 수락", description = "가입 신청 수락 API 입니다.")
     @PostMapping("/accept/{jSeq}")
     public ResponseEntity<String> acceptJoinRequest(@AuthenticationPrincipal String uSeq, @RequestBody JoinRequestControlDTO joinRequestControlDTO, @PathVariable long jSeq){
         try{
@@ -70,6 +74,7 @@ public class JoinRequestController {
         }
     }
 
+    @Operation(summary = "가입 신청 거절", description = "가입 신청 거절 API 입니다.")
     @DeleteMapping("/reject/{jSeq}")
     public ResponseEntity<String> rejectJoinRequest(@AuthenticationPrincipal String uSeq, @PathVariable long jSeq){
         try {
@@ -84,9 +89,6 @@ public class JoinRequestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to reject join request");
         }
     }
-
-
-
 
 
 }

@@ -13,6 +13,7 @@ import project.developer_pacemaker.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -116,5 +117,15 @@ public class GroupMembersService {
 
         UserEntity user = userRepository.findById(Long.parseLong(uSeq)).orElseThrow(() -> new RuntimeException("RuntimeException"));;
         return user;
+    }
+
+    public Boolean checkGroupMember(Long uSeq, long sgSeq) {
+        StudyGroupEntity studyGroup = studyGroupRepository.findById(sgSeq).orElseThrow(() -> new RuntimeException("RuntimeException"));
+        Optional <GroupMembersEntity> member = groupMemberRepository.findByUSeqAndStudyGroup2(uSeq, sgSeq);
+
+        if(member.isPresent()){
+            return true;
+        }
+        return false;
     }
 }

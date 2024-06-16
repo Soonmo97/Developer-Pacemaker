@@ -1,5 +1,6 @@
 package project.developer_pacemaker.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ public class ReportController {
     @Autowired
     ReportService reportService;
 
+    @Operation(summary = "학습 일지 조회", description = "학습 일지 조회 API 입니다.")
     @GetMapping()
     public ResponseEntity<?> getMyReport(@AuthenticationPrincipal String uSeq){
         try{
@@ -31,6 +33,7 @@ public class ReportController {
 
     }
 
+    @Operation(summary = "학습 일지 작성", description = "학습 일지 작성 API 입니다.")
     @PostMapping()
     public ResponseEntity<String> saveReport(@AuthenticationPrincipal String uSeq, @RequestBody ReportCreateDTO report){
         try{
@@ -44,6 +47,7 @@ public class ReportController {
 
     }
 
+    @Operation(summary = "학습 일지 수정", description = "학습 일지 수정 API 입니다.")
     @PatchMapping("/{rSeq}")
     public ResponseEntity<String> updateReport(@AuthenticationPrincipal String uSeq, @RequestBody ReportCreateDTO report, @PathVariable long rSeq){
         Long uSeqLong = Long.parseLong(uSeq);
@@ -57,6 +61,7 @@ public class ReportController {
         }
     }
 
+    @Operation(summary = "학습 일지 삭제", description = "학습 일지 삭제 API 입니다.")
     @PatchMapping("/delete/{rSeq}")
     public ResponseEntity<String> deleteReport(@AuthenticationPrincipal String uSeq, @PathVariable long rSeq){
         Long uSeqLong = Long.parseLong(uSeq);
