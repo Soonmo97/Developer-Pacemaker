@@ -94,16 +94,16 @@ public class PlannerService {
             List<TodoEntity> todoEntities = todoRepository.findByPlanner(plannerEntity);
 
             if(todoEntities != null && !todoEntities.isEmpty()){
-            for(TodoEntity todoEntity:todoEntities) {
-                ArchivedTodoEntity archivedTodoEntity = new ArchivedTodoEntity();
-                archivedTodoEntity.setPSeq(todoEntity.getPlanner().getPSeq());
-                archivedTodoEntity.setContent(todoEntity.getContent());
-                archivedTodoEntity.setDuration(todoEntity.getDuration());
-                archivedTodoEntity.setCompleted(todoEntity.isCompleted());
-                archivedTodoRepository.save(archivedTodoEntity);
+                for(TodoEntity todoEntity:todoEntities) {
+                    ArchivedTodoEntity archivedTodoEntity = new ArchivedTodoEntity();
+                    archivedTodoEntity.setPSeq(todoEntity.getPlanner().getPSeq());
+                    archivedTodoEntity.setContent(todoEntity.getContent());
+                    archivedTodoEntity.setDuration(todoEntity.getDuration());
+                    archivedTodoEntity.setCompleted(todoEntity.isCompleted());
+                    archivedTodoRepository.save(archivedTodoEntity);
 
-                todoRepository.delete(todoEntity);
-            }
+                    todoRepository.delete(todoEntity);
+                }
             }
             return true;
         }catch (Exception e){
@@ -118,8 +118,8 @@ public class PlannerService {
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
             String cleanedDate = date.trim().replaceAll("[^\\d-]", "");
-
             LocalDate parsedDate = LocalDate.parse(cleanedDate);
+
             Optional<PlannerEntity> plannerEntityOptional = plannerRepository.findByUser_uSeqAndIsDeletedAndRegistered(uSeq, false, parsedDate);
             if(plannerEntityOptional.isPresent()){
                 PlannerEntity plannerEntity = plannerEntityOptional.get();

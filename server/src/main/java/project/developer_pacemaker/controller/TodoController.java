@@ -1,5 +1,6 @@
 package project.developer_pacemaker.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class TodoController {
     @Autowired
     TodoService todoService;
 
+    @Operation(summary = "특정 플래너 투두 조회(개인)", description = "특정 플래너 투두 조회(개인) API 입니다.")
     @GetMapping("/{pSeq}")
     public ResponseEntity<?> getTodoList(@AuthenticationPrincipal String uSeq, @PathVariable long pSeq){
         try{
@@ -28,11 +30,12 @@ public class TodoController {
         }
     }
 
+    @Operation(summary = "개인 투두 생성", description = "개인 투두 생성 API 입니다.")
     @PostMapping("/{pSeq}")
     public ResponseEntity<String> saveTodo(@AuthenticationPrincipal String uSeq, @PathVariable long pSeq, @RequestBody TodoCreateDTO todo){
         try {
             Long uSeqLong = Long.parseLong(uSeq);
-            System.out.println("=========="+todo.getContent());
+
             boolean save = todoService.saveTodo(uSeqLong, pSeq, todo );
             if(save){
                 return new ResponseEntity<>("Your todo saved successfully", HttpStatus.CREATED);
@@ -44,12 +47,13 @@ public class TodoController {
         }
     }
 
+    @Operation(summary = "개인 투두 수정", description = "개인 투두 수정 API 입니다.")
     @PatchMapping("/{tSeq}")
     public ResponseEntity<String> updateTodo(@AuthenticationPrincipal String uSeq, @PathVariable long tSeq, @RequestBody TodoDTO todo){
         try {
             Long uSeqLong = Long.parseLong(uSeq);
-            boolean save = todoService.updateTodo(uSeqLong, tSeq, todo );
-            if(save){
+            boolean update = todoService.updateTodo(uSeqLong, tSeq, todo);
+            if(update){
                 return new ResponseEntity<>("Your todo updated successfully", HttpStatus.CREATED);
             }else{
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update todo data");
@@ -59,6 +63,7 @@ public class TodoController {
         }
     }
 
+    @Operation(summary = "개인 투두 삭제", description = "개인 투두 삭제 API 입니다.")
     @DeleteMapping("/{tSeq}")
     public ResponseEntity<String> deleteTodo(@AuthenticationPrincipal String uSeq, @PathVariable long tSeq){
         try {
