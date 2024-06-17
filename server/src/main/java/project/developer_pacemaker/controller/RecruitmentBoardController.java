@@ -7,9 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.RecruitmentBoardDTO;
+import project.developer_pacemaker.dto.ResErrorDTO;
+import project.developer_pacemaker.dto.StudyGroupDTO;
 import project.developer_pacemaker.entity.RecruitmentBoardEntity;
 import project.developer_pacemaker.entity.StudyGroupEntity;
 import project.developer_pacemaker.service.RecruitmentBoardService;
+import project.developer_pacemaker.service.StudyGroupService;
 
 import java.util.List;
 
@@ -19,55 +22,67 @@ import java.util.List;
 public class RecruitmentBoardController {
 
     final private RecruitmentBoardService recruitmentBoardService;
+
     @Autowired
     public RecruitmentBoardController(RecruitmentBoardService recruitmentBoardService) {
         this.recruitmentBoardService = recruitmentBoardService;
     }
 
-    @Operation(summary = "스터디 모집 게시글 작성", description = "스터디 모집 게시판 작성 API 입니다.")
+    @Operation(summary = "스터디 모집 게시글 작성 {sg_seq}, {content}, {name}", description = "스터디 모집 게시판 작성 API 입니다. {sg_seq}, {content}, {name} | name이 사용자가 입력하는 제목입니다.")
     @PostMapping
-    public ResponseEntity<RecruitmentBoardEntity> createRecruitmentBoard(@AuthenticationPrincipal String uSeq, @RequestBody RecruitmentBoardDTO recruitmentBoardDTO) {
-        RecruitmentBoardEntity recruitmentBoard = RecruitmentBoardEntity.builder()
-                .studyGroup(StudyGroupEntity.builder().sgSeq(recruitmentBoardDTO.getSg_seq()).build())
-                .content(recruitmentBoardDTO.getContent())
-                .title((recruitmentBoardDTO.getTitle()))
-                .build();
+    public ResponseEntity<?> createRecruitmentBoard(@AuthenticationPrincipal String uSeq, @RequestBody RecruitmentBoardDTO recruitmentBoardDTO) {
         try {
-            RecruitmentBoardEntity createdBoard = recruitmentBoardService.createRecruitmentBoard(recruitmentBoard, Long.parseLong(uSeq));
+            RecruitmentBoardEntity createdBoard = recruitmentBoardService.createRecruitmentBoard(recruitmentBoardDTO, Long.parseLong(uSeq));
             return ResponseEntity.ok(createdBoard);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(403).body(null);
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                    .error(e.getMessage())
+                    .build()
+            );
         }
     }
+
     @Operation(summary = "스터디 모집 게시글 조회", description = "스터디 모집 게시판 조회 API 입니다.")
     @GetMapping
-    public List<RecruitmentBoardEntity> getAllRecruitmentBoards(){
+    public List<RecruitmentBoardEntity> getAllRecruitmentBoards() {
         return recruitmentBoardService.getAllRecruitmentBoards();
     }
+
     @Operation(summary = "스터디 모집 게시글 제목 검색", description = "스터디 모집 게시판 제목 검색 API 입니다.")
     @GetMapping("/search")
-    public ResponseEntity<List<RecruitmentBoardEntity>> getRecruitmentBoardByTitle(@RequestParam String title){
-        List<RecruitmentBoardEntity> recruitmentBoars = recruitmentBoardService.getRecruitmentBoardByTitle(title);
-        if(recruitmentBoars.isEmpty()){
+    public ResponseEntity<List<RecruitmentBoardEntity>> getRecruitmentBoardByName(@RequestParam String name) {
+        List<RecruitmentBoardEntity> recruitmentBoard = recruitmentBoardService.getRecruitmentBoardByName(name);
+        if (recruitmentBoard.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(recruitmentBoars);
+            return ResponseEntity.ok(recruitmentBoard);
         }
     }
+
     @Operation(summary = "스터디 모집 게시글 수정", description = "스터디 모집 게시글 수정 API 입니다.")
-    @PatchMapping("/{id}")
+    @PatchMapping("/{rb_seq}")
     public ResponseEntity<RecruitmentBoardEntity> updateRecruitmentBoard(
-            @PathVariable Long id,
-            @RequestBody RecruitmentBoardEntity recruitmentBoardDetails,
-            @RequestHeader("uSeq") String uSeq){
-        // @PathVariable은 URL에서 {id} 에 해당하는 부분을 추출
-        return ResponseEntity.ok(recruitmentBoardService.updateRecruitmentBoard(id, recruitmentBoardDetails, uSeq));
+            @AuthenticationPrincipal String uSeq,
+            @PathVariable Long rb_seq,  // @PathVariable은 URL에서 {id} 에 해당하는 부분 추출
+            @RequestBody RecruitmentBoardDTO recruitmentBoardDetails) {
+        return ResponseEntity.ok(recruitmentBoardService.updateRecruitmentBoard(rb_seq, recruitmentBoardDetails, uSeq));
     }
 
     @Operation(summary = "스터디 모집 게시글 삭제", description = "스터디 모집 게시글 삭제 API 입니다.")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRecruitmentBoard(@PathVariable Long id, @RequestParam String uSeq){
-        recruitmentBoardService.deleteRecruitmentBoard(id, uSeq);
+    @DeleteMapping("/{rb_seq}")
+    public ResponseEntity<Void> deleteRecruitmentBoard(@PathVariable Long rb_seq, @RequestParam String uSeq) {
+        recruitmentBoardService.deleteRecruitmentBoard(rb_seq, uSeq);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "내가 그룹장인 스터디 그룹 리스트", description = "내가 그룹장인 스터디 그룹 리스트 API 입니다. 이미 스터디 모집 게시글이 있는 스터디 그룹은 제외되고 표시됩니다.")
+    @GetMapping("/myStudyGroups")
+    public ResponseEntity<List<StudyGroupDTO>> getMyStudyGroups(@AuthenticationPrincipal String uSeq) {
+        List<StudyGroupDTO> studyGroups = recruitmentBoardService.getMyStudyGroups(Long.parseLong(uSeq));
+        if(studyGroups.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }else{
+            return ResponseEntity.ok(studyGroups);
+        }
     }
 }

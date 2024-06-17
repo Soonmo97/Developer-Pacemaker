@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecruitmentBoardDTO {
-    private long sg_seq;
+    private long sgSeq;
     private String content;
-    private String title;
+    private String name;
 }
