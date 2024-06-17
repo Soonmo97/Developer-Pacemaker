@@ -2,6 +2,7 @@ package project.developer_pacemaker.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import project.developer_pacemaker.dto.RecruitmentBoardCreateDTO;
 import project.developer_pacemaker.dto.RecruitmentBoardDTO;
 import project.developer_pacemaker.dto.StudyGroupDTO;
 import project.developer_pacemaker.entity.RecruitmentBoardEntity;
@@ -28,10 +29,12 @@ public class RecruitmentBoardService {
         this.studyGroupRepository = studyGroupRepository;
         this.userRepository = userRepository;
     }
-    public RecruitmentBoardEntity createRecruitmentBoard(RecruitmentBoardDTO recruitmentBoardDTO, long uSeq) {
+    public RecruitmentBoardCreateDTO createRecruitmentBoard(RecruitmentBoardDTO recruitmentBoardDTO, long uSeq) {
             StudyGroupEntity foundStudyGroup = studyGroupRepository.findById(recruitmentBoardDTO.getSgSeq())
                     .orElseThrow(()-> new RuntimeException("스터디 그룹을 찾을 수 없습니다."));
-            log.info("studyGroup sgSeq: {}", foundStudyGroup.getSgSeq());
+//            UserEntity user = userRepository.findById(foundStudyGroup.getUser().getUSeq())
+//                    .orElseThrow(()-> new RuntimeException("user 없음."));
+        log.info("studyGroup sgSeq: {}", foundStudyGroup.getSgSeq());
             if(foundStudyGroup.getUser().getUSeq() != uSeq){
                 throw new RuntimeException("사용자가 스터디 그룹장이 아닙니다.");
             }
@@ -40,8 +43,15 @@ public class RecruitmentBoardService {
                 .content(recruitmentBoardDTO.getContent())
                 .name(recruitmentBoardDTO.getName())
                 .build();
-        return recruitmentBoardRepository.save(recruitmentBoard);
+            recruitmentBoardRepository.save(recruitmentBoard);
+            return RecruitmentBoardCreateDTO.builder()
+                    .studyGroup(foundStudyGroup)
+                    .content(recruitmentBoardDTO.getContent())
+                    .name(recruitmentBoardDTO.getName())
+                    .nickname(foundStudyGroup.getUser().getNickname())
+                    .build();
     }
+
 
     public RecruitmentBoardEntity updateRecruitmentBoard(Long id, RecruitmentBoardDTO recruitmentBoardDetails, String uSeq){
         Optional<RecruitmentBoardEntity> optionalRecruitmentBoard = recruitmentBoardRepository.findById(id);
