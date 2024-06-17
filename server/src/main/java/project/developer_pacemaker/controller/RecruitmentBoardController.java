@@ -75,7 +75,7 @@ public class RecruitmentBoardController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "내가 그룹장인 스터디 그룹 리스트", description = "내가 그룹장인 스터디 그룹 리스트 API 입니다.")
+    @Operation(summary = "내가 그룹장인 스터디 그룹 리스트", description = "내가 그룹장인 스터디 그룹 리스트 API 입니다. 이미 스터디 모집 게시글이 있는 스터디 그룹은 제외되고 표시됩니다.")
     @GetMapping("/myStudyGroups")
     public ResponseEntity<List<StudyGroupDTO>> getMyStudyGroups(@AuthenticationPrincipal String uSeq) {
         List<StudyGroupDTO> studyGroups = recruitmentBoardService.getMyStudyGroups(Long.parseLong(uSeq));
@@ -85,6 +85,4 @@ public class RecruitmentBoardController {
             return ResponseEntity.ok(studyGroups);
         }
     }
-    // 1. 내가 그룹장인 스터디 그룹 보여주기 전에 이미 모집 게시판에 존재하는 스터디 그룹 제외하는 if문 추가하기
-    
 }
