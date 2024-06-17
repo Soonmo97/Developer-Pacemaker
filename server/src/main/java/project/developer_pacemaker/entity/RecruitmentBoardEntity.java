@@ -47,7 +47,6 @@ public class RecruitmentBoardEntity {
     @ColumnDefault("false")
     private boolean isDeleted;
 
-
     @Column(name = "name", nullable = false, length = 30)
     private String name;  // 사용자가 직접 입력하는 제목
 }

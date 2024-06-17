@@ -13,4 +13,5 @@ public class RecruitmentBoardCreateDTO {
     private StudyGroupEntity studyGroup;
     private String content;
     private String name;
+    private String registered;
 }

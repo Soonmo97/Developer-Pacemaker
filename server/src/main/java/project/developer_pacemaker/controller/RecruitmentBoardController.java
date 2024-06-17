@@ -45,7 +45,7 @@ public class RecruitmentBoardController {
 
     @Operation(summary = "스터디 모집 게시글 조회", description = "스터디 모집 게시판 조회 API 입니다.")
     @GetMapping
-    public List<RecruitmentBoardEntity> getAllRecruitmentBoards() {
+    public List<RecruitmentBoardCreateDTO> getAllRecruitmentBoards() {
         return recruitmentBoardService.getAllRecruitmentBoards();
     }
 
