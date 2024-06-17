@@ -9,6 +9,7 @@ import project.developer_pacemaker.entity.StudyGroupEntity;
 @Getter
 @Builder
 public class RecruitmentBoardCreateDTO {
+    private long rbSeq;
     private String nickname;
     private StudyGroupEntity studyGroup;
     private String content;
