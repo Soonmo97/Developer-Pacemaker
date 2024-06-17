@@ -118,7 +118,7 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "비밀번호 찾기(재설정)", description = "비밀번호 찾기(재설정) API 입니다. {pw}")
+    @Operation(summary = "비밀번호 찾기(재설정)", description = "비밀번호 찾기(재설정) API 입니다. {email, pw}")
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody UserDTO userDTO
     ) {
