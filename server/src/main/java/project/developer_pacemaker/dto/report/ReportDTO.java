@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportDTO {
+    private long rSeq;
     private String title;
     private String content;
     private String registered;

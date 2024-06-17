@@ -17,7 +17,10 @@ import project.developer_pacemaker.repository.TodoRepository;
 import project.developer_pacemaker.repository.UserRepository;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -55,14 +58,26 @@ public class PlannerService {
     private Sort sortBypSeq() {
         return Sort.by(Sort.Direction.DESC, "pSeq");
     }
+
     @Transactional
-    public void savePlanner(Long uSeq, PlannerCreateDTO planner) {
+    public boolean savePlanner(Long uSeq, PlannerCreateDTO planner, String date) {
 
         UserEntity userEntity = userRepository.findById(uSeq)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        String cleanedDate = date.trim().replaceAll("[^\\d-]", "");
+        LocalDate parsedDate = LocalDate.parse(cleanedDate);
+
+        Optional<PlannerEntity> plannerEntityOptional = plannerRepository.findByUser_uSeqAndIsDeletedAndRegistered(uSeq, false, parsedDate);
+
+        // 해당 날짜에 이미 만들어둔 플래너가 있는 경우
+        if(plannerEntityOptional.isPresent()){
+            return false;
+        }
+
         PlannerEntity plannerEntity = new PlannerEntity();
         plannerEntity.setUser(userEntity);
+        plannerEntity.setRegistered(parsedDate);
         plannerRepository.save(plannerEntity);
 
         List<TodoCreateDTO> todoCreateDTOList = planner.getTodoCreateDTOList();
@@ -77,7 +92,7 @@ public class PlannerService {
                 todoRepository.save(todoEntity);
             }
         }
-
+        return true;
     }
 
     public boolean deletePlannerBypSeq(Long currentUSeq, long pSeq) {
@@ -134,6 +149,28 @@ public class PlannerService {
             return null;
         }catch (Exception e){
             System.out.println("e::"+e.getMessage());
+            return null;
+        }
+    }
+
+    public Map<LocalDate, Long> getUserGrass(Long uSeq, YearMonth yearMonth) {
+        try{
+            UserEntity userEntity = userRepository.findById(uSeq)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            LocalDate startDate = yearMonth.atDay(1);
+            LocalDate endDate = yearMonth.atEndOfMonth();
+
+            List<PlannerEntity> plannerEntities = plannerRepository.findByUser_uSeqAndIsDeletedAndRegisteredBetween(uSeq, false, startDate, endDate);
+
+            Map<LocalDate, Long> completedTaskCounts = new HashMap<>();
+            for(PlannerEntity planner:plannerEntities){
+                long completedCount = planner.getTodoEntities().stream().filter(TodoEntity::isCompleted).count();
+                completedTaskCounts.put(planner.getRegistered(), completedCount);
+            }
+            return completedTaskCounts;
+        }catch (Exception e){
+            System.out.println("e:: "+e.getMessage());
             return null;
         }
     }

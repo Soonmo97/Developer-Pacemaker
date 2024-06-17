@@ -29,7 +29,6 @@ public class GroupPlannerEntity {
     @JoinColumn(name = "sgSeq", referencedColumnName = "sgSeq", nullable = false)
     private StudyGroupEntity studyGroup;
 
-    @CreationTimestamp
     @Column(name = "registered", nullable = false)
     private LocalDate registered;
 

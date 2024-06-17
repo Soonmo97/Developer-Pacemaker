@@ -12,7 +12,10 @@ import project.developer_pacemaker.dto.groupPlanner.GroupTodoDTO;
 import project.developer_pacemaker.service.GroupMembersService;
 import project.developer_pacemaker.service.GroupPlannerService;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/group-planner")
@@ -49,7 +52,7 @@ public class GroupPlannerController {
 
     @Operation(summary = "스터디그룹 플래너 작성", description = "스터디그룹 플래너 작성 API 입니다.")
     @PostMapping("/save")
-    public ResponseEntity<String> saveGroupPlanner(@AuthenticationPrincipal String uSeq, @RequestBody GroupPlannerCreateDTO groupPlanner){
+    public ResponseEntity<String> saveGroupPlanner(@AuthenticationPrincipal String uSeq, @RequestParam String date, @RequestBody GroupPlannerCreateDTO groupPlanner){
         try{
             Long uSeqLong = Long.parseLong(uSeq);
 
@@ -58,8 +61,16 @@ public class GroupPlannerController {
             if(!check){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save planner data");
             }
-            groupPlannerService.saveGroupPlanner(uSeqLong, groupPlanner);
-            return new ResponseEntity<>("Your planner saved successfully", HttpStatus.CREATED);
+
+            String cleanedDate = date.trim().replaceAll("[^\\d-]", "");
+            LocalDate parsedDate = LocalDate.parse(cleanedDate);
+
+            boolean save = groupPlannerService.saveGroupPlanner(uSeqLong, groupPlanner, parsedDate);
+            if(save){
+                return new ResponseEntity<>("Your planner saved successfully", HttpStatus.CREATED);
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save planner data");
+            }
         }catch (Exception e){
             System.out.println("save::"+e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save planner data");
@@ -78,4 +89,31 @@ public class GroupPlannerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to delete planner data");
         }
     }
+
+    @Operation(summary = "스터디그룹원 월별 잔디 조회", description = "스터디그룹원 월별 잔디 조회 API 입니다.")
+    @PostMapping("/grass")
+    public ResponseEntity<?> getUserGroupGrass(@AuthenticationPrincipal String uSeq, @RequestParam String yearMonthStr, @RequestBody GroupPlannerRequestDTO groupPlannerRequestDTO){
+        try{
+            Long uSeqLong = Long.parseLong(uSeq);
+
+            // 해당 스터디 그룹에 포함된 유저인지 확인
+            Boolean check1 = groupMembersService.checkGroupMember(groupPlannerRequestDTO.getUSeq(), groupPlannerRequestDTO.getSgSeq());
+            Boolean check2 = groupMembersService.checkGroupMember(uSeqLong, groupPlannerRequestDTO.getSgSeq());
+            if(!check1 || !check2){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to load user grass data");
+            }
+
+            YearMonth yearMonth = YearMonth.parse(yearMonthStr);
+
+            Map<LocalDate, Long> grass = groupPlannerService.getGroupGrass(groupPlannerRequestDTO, yearMonth);
+
+            return new ResponseEntity<>(grass, HttpStatus.OK);
+
+        }catch (Exception e){
+            System.out.println("e::"+e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to load user grass data");
+        }
+    }
+
+
 }
