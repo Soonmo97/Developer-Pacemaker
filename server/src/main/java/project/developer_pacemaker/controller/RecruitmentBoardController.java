@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import project.developer_pacemaker.dto.RecruitmentBoardCreateDTO;
 import project.developer_pacemaker.dto.RecruitmentBoardDTO;
 import project.developer_pacemaker.dto.ResErrorDTO;
 import project.developer_pacemaker.dto.StudyGroupDTO;
@@ -32,7 +33,7 @@ public class RecruitmentBoardController {
     @PostMapping
     public ResponseEntity<?> createRecruitmentBoard(@AuthenticationPrincipal String uSeq, @RequestBody RecruitmentBoardDTO recruitmentBoardDTO) {
         try {
-            RecruitmentBoardEntity createdBoard = recruitmentBoardService.createRecruitmentBoard(recruitmentBoardDTO, Long.parseLong(uSeq));
+            RecruitmentBoardCreateDTO createdBoard = recruitmentBoardService.createRecruitmentBoard(recruitmentBoardDTO, Long.parseLong(uSeq));
             return ResponseEntity.ok(createdBoard);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(ResErrorDTO.builder()

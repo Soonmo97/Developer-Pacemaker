@@ -5,9 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import project.developer_pacemaker.entity.RecruitmentBoardEntity;
-
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface RecruitmentBoardRepository extends JpaRepository<RecruitmentBoardEntity, Long> {
