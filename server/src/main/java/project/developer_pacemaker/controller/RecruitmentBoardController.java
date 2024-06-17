@@ -28,7 +28,7 @@ public class RecruitmentBoardController {
         this.recruitmentBoardService = recruitmentBoardService;
     }
 
-    @Operation(summary = "스터디 모집 게시글 작성 {sg_seq}, {content}, {name}", description = "스터디 모집 게시판 작성 API 입니다. {sg_seq}, {content}, {name} | name이 사용자가 입력하는 제목입니다.")
+    @Operation(summary = "스터디 모집 게시글 작성", description = "스터디 모집 게시판 작성 API 입니다. <br> {sg_seq}, {content}, {name} / {sg_seq}는 스터디 그룹의 기본키입니다.(체크박스나 리스트로 선택)")
     @PostMapping
     public ResponseEntity<?> createRecruitmentBoard(@AuthenticationPrincipal String uSeq, @RequestBody RecruitmentBoardDTO recruitmentBoardDTO) {
         try {
@@ -48,7 +48,7 @@ public class RecruitmentBoardController {
         return recruitmentBoardService.getAllRecruitmentBoards();
     }
 
-    @Operation(summary = "스터디 모집 게시글 제목 검색", description = "스터디 모집 게시판 제목 검색 API 입니다.")
+    @Operation(summary = "스터디 모집 게시글 제목 검색", description = "스터디 모집 게시판 제목 검색 API 입니다. <br> {name}")
     @GetMapping("/search")
     public ResponseEntity<List<RecruitmentBoardEntity>> getRecruitmentBoardByName(@RequestParam String name) {
         List<RecruitmentBoardEntity> recruitmentBoard = recruitmentBoardService.getRecruitmentBoardByName(name);
@@ -59,7 +59,7 @@ public class RecruitmentBoardController {
         }
     }
 
-    @Operation(summary = "스터디 모집 게시글 수정", description = "스터디 모집 게시글 수정 API 입니다.")
+    @Operation(summary = "스터디 모집 게시글 수정", description = "스터디 모집 게시글 수정 API 입니다. <br> {rb_deq}, {content}, {name} <br> re_seq는 jwt 토큰에서")
     @PatchMapping("/{rb_seq}")
     public ResponseEntity<RecruitmentBoardEntity> updateRecruitmentBoard(
             @AuthenticationPrincipal String uSeq,
@@ -68,7 +68,7 @@ public class RecruitmentBoardController {
         return ResponseEntity.ok(recruitmentBoardService.updateRecruitmentBoard(rb_seq, recruitmentBoardDetails, uSeq));
     }
 
-    @Operation(summary = "스터디 모집 게시글 삭제", description = "스터디 모집 게시글 삭제 API 입니다.")
+    @Operation(summary = "스터디 모집 게시글 삭제", description = "스터디 모집 게시글 삭제 API 입니다. <br> {uSeq}")
     @DeleteMapping("/{rb_seq}")
     public ResponseEntity<Void> deleteRecruitmentBoard(@PathVariable Long rb_seq, @RequestParam String uSeq) {
         recruitmentBoardService.deleteRecruitmentBoard(rb_seq, uSeq);
