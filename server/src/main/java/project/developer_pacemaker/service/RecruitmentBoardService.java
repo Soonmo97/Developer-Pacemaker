@@ -13,6 +13,7 @@ import project.developer_pacemaker.repository.StudyGroupRepository;
 import lombok.extern.slf4j.Slf4j;
 import project.developer_pacemaker.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,8 +73,19 @@ public class RecruitmentBoardService {
         }
     }
 
-    public List<RecruitmentBoardEntity> getAllRecruitmentBoards(){
-        return recruitmentBoardRepository.findAll();
+    public List<RecruitmentBoardCreateDTO> getAllRecruitmentBoards(){
+        List<RecruitmentBoardEntity> recruitmentBoardEntities = recruitmentBoardRepository.findAll();
+        List<RecruitmentBoardCreateDTO> recruitmentBoardCreates = new ArrayList<>();
+        for(RecruitmentBoardEntity item : recruitmentBoardEntities) {
+            recruitmentBoardCreates.add(RecruitmentBoardCreateDTO.builder()
+                    .registered(item.getRegistered())
+                    .content(item.getContent())
+                    .nickname(item.getStudyGroup().getUser().getNickname())
+                    .name(item.getName())
+                    .studyGroup(item.getStudyGroup())
+                    .build());
+        }
+        return recruitmentBoardCreates;
     }
 
     public List<RecruitmentBoardEntity> getRecruitmentBoardByName(String name){
