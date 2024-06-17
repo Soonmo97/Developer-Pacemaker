@@ -25,7 +25,6 @@ public class PlannerEntity {
     @JoinColumn(name = "uSeq", referencedColumnName = "uSeq", nullable = false)
     private UserEntity user;
 
-    @CreationTimestamp
     @Column(name = "registered", nullable = false)
     private LocalDate registered;
 

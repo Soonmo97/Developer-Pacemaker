@@ -25,7 +25,7 @@ public class ReportService {
         Sort sort = sortByrSeq();
         List<ReportEntity> reportEntities = reportRepository.findByUser_uSeqAndIsDeleted(uSeq, false, sort);
         return reportEntities.stream()
-                .map(report -> new ReportDTO(report.getTitle(), report.getContent(), report.getRegistered()))
+                .map(report -> new ReportDTO(report.getRSeq(),report.getTitle(), report.getContent(), report.getRegistered()))
                 .collect(Collectors.toList());
     }
 

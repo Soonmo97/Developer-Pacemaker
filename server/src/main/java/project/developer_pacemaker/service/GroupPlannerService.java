@@ -1,8 +1,10 @@
 package project.developer_pacemaker.service;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.developer_pacemaker.dto.groupPlanner.GroupPlannerCreateDTO;
+import project.developer_pacemaker.dto.groupPlanner.GroupPlannerRequestDTO;
 import project.developer_pacemaker.dto.groupPlanner.GroupTodoCreateDTO;
 import project.developer_pacemaker.dto.groupPlanner.GroupTodoDTO;
 import project.developer_pacemaker.entity.GroupPlannerEntity;
@@ -14,8 +16,12 @@ import project.developer_pacemaker.repository.GroupTodoRepository;
 import project.developer_pacemaker.repository.StudyGroupRepository;
 import project.developer_pacemaker.repository.UserRepository;
 
+import javax.swing.*;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,7 +45,7 @@ public class GroupPlannerService {
             String cleanedDate = date.trim().replaceAll("[^\\d-]", "");
             LocalDate parsedDate = LocalDate.parse(cleanedDate);
 
-            Optional< GroupPlannerEntity> groupPlannerEntityOptional = groupPlannerRepository.findByUser_uSeqAndGpSeqAndIsDeletedAndRegistered(sgSeq, uSeq, false, parsedDate);
+            Optional< GroupPlannerEntity> groupPlannerEntityOptional = groupPlannerRepository.findByUser_uSeqAndStudyGroup_sgSeqAndIsDeletedAndRegistered(uSeq, sgSeq, false, parsedDate);
             if(groupPlannerEntityOptional.isPresent()){
                 GroupPlannerEntity groupPlannerEntity = groupPlannerEntityOptional.get();
                 List<GroupTodoEntity> groupTodoEntityList =groupTodoRepository.findByGroupPlanner(groupPlannerEntity);
@@ -56,7 +62,7 @@ public class GroupPlannerService {
     }
 
     @Transactional
-    public void saveGroupPlanner(Long uSeq, GroupPlannerCreateDTO groupPlanner) {
+    public boolean saveGroupPlanner(Long uSeq, GroupPlannerCreateDTO groupPlanner, LocalDate parsedDate) {
         try {
             UserEntity userEntity = userRepository.findById(uSeq)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -64,9 +70,17 @@ public class GroupPlannerService {
             StudyGroupEntity studyGroupEntity = studyGroupRepository.findById(groupPlanner.getSgSeq())
                     .orElseThrow(() -> new IllegalArgumentException("Study Group not found"));
 
+            Optional<GroupPlannerEntity> groupPlannerEntityOptional = groupPlannerRepository.findByUser_uSeqAndStudyGroup_sgSeqAndIsDeletedAndRegistered(uSeq, groupPlanner.getSgSeq(), false, parsedDate);
+
+            // 해당 날짜에 이미 만들어둔 플래너가 있는 경우
+            if(groupPlannerEntityOptional.isPresent()){
+                return false;
+            }
+
             GroupPlannerEntity groupPlannerEntity = new GroupPlannerEntity();
             groupPlannerEntity.setStudyGroup(studyGroupEntity);
             groupPlannerEntity.setUser(userEntity);
+            groupPlannerEntity.setRegistered(parsedDate);
             groupPlannerRepository.save(groupPlannerEntity);
 
             List<GroupTodoCreateDTO> groupTodoCreateDTOList = groupPlanner.getGroupTodoCreateDTOList();
@@ -80,8 +94,10 @@ public class GroupPlannerService {
                     groupTodoRepository.save(groupTodoEntity);
                 }
             }
+            return true;
         }catch (Exception e){
             System.out.println("e::"+e.getMessage());
+            return false;
         }
     }
 
@@ -108,6 +124,28 @@ public class GroupPlannerService {
         }catch (Exception e){
             System.out.println("e::"+e.getMessage());
             return false;
+        }
+    }
+
+    public Map<LocalDate, Long> getGroupGrass(GroupPlannerRequestDTO groupPlannerRequestDTO, YearMonth yearMonth) {
+        try{
+            StudyGroupEntity studyGroupEntity = studyGroupRepository.findById(groupPlannerRequestDTO.getSgSeq())
+                    .orElseThrow(() -> new IllegalArgumentException("Study Group not found"));
+
+            LocalDate startDate = yearMonth.atDay(1);
+            LocalDate endDate = yearMonth.atEndOfMonth();
+
+            List<GroupPlannerEntity> groupPlannerEntities = groupPlannerRepository.findByUser_uSeqAndStudyGroup_sgSeqAndIsDeletedAndRegisteredBetween(groupPlannerRequestDTO.getUSeq(), groupPlannerRequestDTO.getSgSeq(), false, startDate, endDate);
+
+            Map<LocalDate, Long> completedTaskCounts = new HashMap<>();
+            for(GroupPlannerEntity groupPlanner: groupPlannerEntities){
+                long completedCount = groupPlanner.getGroupTodoEntityList().stream().filter(GroupTodoEntity::isCompleted).count();
+                completedTaskCounts.put(groupPlanner.getRegistered(), completedCount);
+            }
+            return completedTaskCounts;
+        }catch (Exception e){
+            System.out.println("e:: "+e.getMessage());
+            return null;
         }
     }
 }

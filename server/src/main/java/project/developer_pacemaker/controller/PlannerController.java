@@ -10,7 +10,10 @@ import project.developer_pacemaker.dto.planner.PlannerCreateDTO;
 import project.developer_pacemaker.dto.planner.TodoDTO;
 import project.developer_pacemaker.service.PlannerService;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/planner")
@@ -31,7 +34,7 @@ public class PlannerController {
     }
     @Operation(summary = "개인 플래너 작성", description = "개인 플래너 작성 API 입니다.")
     @PostMapping()
-    public ResponseEntity<String> savePlanner(@AuthenticationPrincipal String uSeq, @RequestBody PlannerCreateDTO planner){
+    public ResponseEntity<String> savePlanner(@AuthenticationPrincipal String uSeq, @RequestParam String date, @RequestBody PlannerCreateDTO planner){
         // 테스트 데이터 ("todoCreateDTOList" 값 필수 -> [] 빈 배열이라도 보낼 것)
         // todoDTOList 안의 content만 필수(나머지는 선택)
         // 예시
@@ -49,8 +52,13 @@ public class PlannerController {
 //        }
         try{
             Long uSeqLong = Long.parseLong(uSeq);
-            plannerService.savePlanner(uSeqLong, planner);
-            return new ResponseEntity<>("Your planner saved successfully", HttpStatus.CREATED);
+            boolean save = plannerService.savePlanner(uSeqLong, planner, date);
+
+            if(save){
+                return new ResponseEntity<>("Your planner saved successfully", HttpStatus.CREATED);
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save planner data");
+            }
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
             // return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save planner data");
@@ -69,5 +77,22 @@ public class PlannerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to delete planner data");
         }
     }
+
+    @Operation(summary = "월별 개인 잔디 조회", description = "월별 개인 잔디 조회 API 입니다.")
+    @GetMapping("/grass")
+    public ResponseEntity<?> getUserGroupGrass(@AuthenticationPrincipal String uSeq, @RequestParam String yearMonthStr){
+        try{
+            Long uSeqLong = Long.parseLong(uSeq);
+            YearMonth yearMonth = YearMonth.parse(yearMonthStr);
+
+            Map<LocalDate, Long> grass = plannerService.getUserGrass(uSeqLong, yearMonth);
+
+            return new ResponseEntity<>(grass, HttpStatus.OK);
+        }catch (Exception e){
+            System.out.println("e:: "+e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to load user grass data");
+        }
+    }
+
 
 }
