@@ -78,6 +78,7 @@ public class RecruitmentBoardService {
         List<RecruitmentBoardCreateDTO> recruitmentBoardCreates = new ArrayList<>();
         for(RecruitmentBoardEntity item : recruitmentBoardEntities) {
             recruitmentBoardCreates.add(RecruitmentBoardCreateDTO.builder()
+                    .rbSeq(item.getRbSeq())
                     .registered(item.getRegistered())
                     .content(item.getContent())
                     .nickname(item.getStudyGroup().getUser().getNickname())
