@@ -47,6 +47,7 @@ public class PlannerService {
         return plannerEntities.stream()
                 .map(planner -> new PlannerDTO(
                         planner.getPSeq(),
+                        planner.getMemo(),
                         planner.getRegistered(),
                         planner.getTodoEntities().stream()
                                 .map(todo -> new TodoDTO(todo.getTSeq(),todo.getContent(), todo.getDuration(), todo.isCompleted()))
@@ -77,6 +78,7 @@ public class PlannerService {
 
         PlannerEntity plannerEntity = new PlannerEntity();
         plannerEntity.setUser(userEntity);
+        plannerEntity.setMemo(planner.getMemo());
         plannerEntity.setRegistered(parsedDate);
         plannerRepository.save(plannerEntity);
 
@@ -127,7 +129,7 @@ public class PlannerService {
         }
     }
 
-    public List<TodoDTO> getPlannerByDate(Long uSeq, String date) {
+    public PlannerDTO getPlannerByDate(Long uSeq, String date) {
         try {
             UserEntity userEntity = userRepository.findById(uSeq)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -142,9 +144,10 @@ public class PlannerService {
                     return null;
                 }
                 List<TodoEntity> todoEntities = todoRepository.findByPlanner(plannerEntity);
-                return todoEntities.stream()
-                        .map(todo -> new TodoDTO(todo.getTSeq(),todo.getContent(), todo.getDuration(), todo.isCompleted()))
+                List<TodoDTO> todoDTOList =  todoEntities.stream()
+                        .map(this::convertToDto)
                         .collect(Collectors.toList());
+                return new PlannerDTO(plannerEntity.getPSeq(),plannerEntity.getMemo(),plannerEntity.getRegistered(), todoDTOList);
             }
             return null;
         }catch (Exception e){
@@ -174,4 +177,14 @@ public class PlannerService {
             return null;
         }
     }
+
+    private TodoDTO convertToDto(TodoEntity todoEntity) {
+        TodoDTO todoDTO = new TodoDTO();
+        todoDTO.setTSeq(todoEntity.getTSeq());
+        todoDTO.setContent(todoEntity.getContent());
+        todoDTO.setDuration(todoEntity.getDuration());
+        todoDTO.setIsCompleted(todoEntity.isCompleted());
+        return todoDTO;
+    }
+
 }
