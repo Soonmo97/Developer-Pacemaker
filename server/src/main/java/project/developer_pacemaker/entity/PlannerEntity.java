@@ -28,6 +28,9 @@ public class PlannerEntity {
     @Column(name = "registered", nullable = false)
     private LocalDate registered;
 
+    @Column(name="memo", nullable = false, columnDefinition = "TEXT")
+    private String memo;
+
     @Column(name = "isDeleted", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private boolean isDeleted;
 

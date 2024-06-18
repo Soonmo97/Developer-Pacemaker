@@ -10,5 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlannerCreateDTO {
+    private String memo;
     private List<TodoCreateDTO> todoCreateDTOList;
 }

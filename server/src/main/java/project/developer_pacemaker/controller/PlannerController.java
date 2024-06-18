@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.planner.PlannerCreateDTO;
+import project.developer_pacemaker.dto.planner.PlannerDTO;
 import project.developer_pacemaker.dto.planner.TodoDTO;
 import project.developer_pacemaker.service.PlannerService;
 
@@ -26,7 +27,7 @@ public class PlannerController {
     public ResponseEntity<?> getMyPlanner(@AuthenticationPrincipal String uSeq, @RequestParam String date){
         try{
             Long  uSeqLong = Long.parseLong(uSeq);
-            List<TodoDTO> planner= plannerService.getPlannerByDate(uSeqLong, date);
+            PlannerDTO planner= plannerService.getPlannerByDate(uSeqLong, date);
             return new ResponseEntity<>(planner, HttpStatus.OK);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to load planner data");

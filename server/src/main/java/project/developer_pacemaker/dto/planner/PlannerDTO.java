@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PlannerDTO {
     private long pSeq;
+    private String memo;
     private LocalDate registered;
     private List<TodoDTO> todoDTOList;
 }
