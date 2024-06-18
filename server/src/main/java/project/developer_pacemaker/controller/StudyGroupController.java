@@ -270,4 +270,18 @@ public class StudyGroupController {
             );
         }
     }
+
+    @Operation(summary = "내가 그룹장인 스터디그룹 리스트 조회", description = "내가 그룹장인 스터디그룹 리스트 조회 API 입니다.")
+    @GetMapping("/leader-groups")
+    public ResponseEntity<?> getUSeqGroups(@AuthenticationPrincipal String uSeq) {
+        try {
+            List<StudyGroupEntity> studyGroupEntities = studyGroupService.getUSeqAll(uSeq);
+            return ResponseEntity.ok(studyGroupEntities);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+    }
 }
