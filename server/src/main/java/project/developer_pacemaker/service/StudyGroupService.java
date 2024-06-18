@@ -175,7 +175,7 @@ public class StudyGroupService {
         return result;
     }
 
-    public List<StudyGroupEntity> getUSeqAll(String uSeq) {
+    public List<StudyGroupEntity> getUSeqAll(final String uSeq) {
         List<StudyGroupEntity> studyGroupEntities = studyGroupRepository.findAll();
         List<StudyGroupEntity> uSeqGroups = new ArrayList<>();
         for (StudyGroupEntity item : studyGroupEntities) {

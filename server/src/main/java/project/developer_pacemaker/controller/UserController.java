@@ -234,4 +234,17 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "프로필 이미지 수정", description = "프로필 이미지 수정 API 입니다. {img}")
+    @PatchMapping("/img")
+    public ResponseEntity<?> updateImg(@AuthenticationPrincipal String uSeq, @RequestBody UserDTO userDTO) {
+        try {
+            return ResponseEntity.ok(userService.updateImg(uSeq, userDTO.getImg()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResErrorDTO.builder()
+                .error(e.getMessage())
+                .build()
+            );
+        }
+    }
+
 }

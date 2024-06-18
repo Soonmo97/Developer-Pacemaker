@@ -115,4 +115,10 @@ public class UserService {
         return passwordEncoder.matches(password, user.getPw());
     }
 
+    public UserEntity updateImg(final String uSeq, final String img) {
+        UserEntity user = userRepository.findById(Long.parseLong(uSeq)).orElseThrow(() -> new RuntimeException("RuntimeException"));
+        user.setImg(img);
+        return userRepository.save(user);
+    }
+
 }
