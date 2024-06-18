@@ -11,6 +11,7 @@ import project.developer_pacemaker.repository.GroupMemberRepository;
 import project.developer_pacemaker.repository.StudyGroupRepository;
 import project.developer_pacemaker.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -172,6 +173,17 @@ public class StudyGroupService {
         }
 
         return result;
+    }
+
+    public List<StudyGroupEntity> getUSeqAll(String uSeq) {
+        List<StudyGroupEntity> studyGroupEntities = studyGroupRepository.findAll();
+        List<StudyGroupEntity> uSeqGroups = new ArrayList<>();
+        for (StudyGroupEntity item : studyGroupEntities) {
+            if (item.getUser().getUSeq() == Long.parseLong(uSeq)) {
+                uSeqGroups.add(item);
+            }
+        }
+        return uSeqGroups;
     }
 
 }
