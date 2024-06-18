@@ -9,9 +9,9 @@ import org.hibernate.annotations.*;
 
 
 @Entity
-@SQLDelete(sql = "UPDATE recruitmentBoard SET is_deleted = 1 WHERE rbSeq = ?") // jpa delete 를 실행시킬 경우 해당 sql 문 실행
+@SQLDelete(sql = "UPDATE recruitment_board SET is_deleted = 1 WHERE rb_Seq = ?") // jpa delete 를 실행시킬 경우 해당 sql 문 실행
 @SQLRestriction("is_deleted = 0") // 해당 엔티티의 기본 쿼리에 디폴트로 where 조건을 적용하는 어노테이션
-@Table(name = "recruitmentBoard")
+@Table(name = "recruitment_board")
 @Getter
 @Setter
 @Builder

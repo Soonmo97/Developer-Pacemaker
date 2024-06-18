@@ -45,6 +45,11 @@ public class RecruitmentBoardService {
                 .name(recruitmentBoardDTO.getName())
                 .build();
             recruitmentBoardRepository.save(recruitmentBoard);
+            // 모집여부 1(모집 중)으로 변경
+            foundStudyGroup.setStatus(true);
+            studyGroupRepository.save(foundStudyGroup);
+
+
             return RecruitmentBoardCreateDTO.builder()
                     .studyGroup(foundStudyGroup)
                     .content(recruitmentBoardDTO.getContent())
@@ -102,6 +107,8 @@ public class RecruitmentBoardService {
                 throw new RuntimeException("스터디 그룹의 그룹장이 아닙니다.");
             }
             recruitmentBoardRepository.deleteById(id);
+            studyGroup.setStatus(false);
+            studyGroupRepository.save(studyGroup);
         } else {
             throw new RuntimeException("스터디 모집 게시글 id를 찾을 수 없습니다."+id);
         }

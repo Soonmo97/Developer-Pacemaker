@@ -71,7 +71,7 @@ public class RecruitmentBoardController {
 
     @Operation(summary = "스터디 모집 게시글 삭제", description = "스터디 모집 게시글 삭제 API 입니다. <br> {uSeq}")
     @DeleteMapping("/{rb_seq}")
-    public ResponseEntity<Void> deleteRecruitmentBoard(@PathVariable Long rb_seq, @RequestParam String uSeq) {
+    public ResponseEntity<Void> deleteRecruitmentBoard(@PathVariable Long rb_seq, @AuthenticationPrincipal String uSeq) {
         recruitmentBoardService.deleteRecruitmentBoard(rb_seq, uSeq);
         return ResponseEntity.noContent().build();
     }
