@@ -121,12 +121,13 @@ public class StudyGroupService {
 
     public List<StudyGroupEntity> getOpenAll() {
             List<StudyGroupEntity> studyGroups = studyGroupRepository.findAll();
+            List<StudyGroupEntity> openGroups = new ArrayList<>();
             for (StudyGroupEntity studyGroup : studyGroups) {
-                if(studyGroup.isStatus() == false) {
-                    studyGroups.remove(studyGroup);
+                if(studyGroup.isStatus() == true) {
+                    openGroups.add(studyGroup);
                 }
             }
-            return studyGroups;
+            return openGroups;
     }
 
     public List<StudyGroupEntity> myGetAll(final String uSeq) {
