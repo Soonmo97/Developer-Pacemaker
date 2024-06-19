@@ -1,6 +1,5 @@
 package project.developer_pacemaker.service;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.developer_pacemaker.dto.groupPlanner.GroupPlannerCreateDTO;
@@ -16,7 +15,6 @@ import project.developer_pacemaker.repository.GroupTodoRepository;
 import project.developer_pacemaker.repository.StudyGroupRepository;
 import project.developer_pacemaker.repository.UserRepository;
 
-import javax.swing.*;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.HashMap;
@@ -62,7 +60,7 @@ public class GroupPlannerService {
     }
 
     @Transactional
-    public boolean saveGroupPlanner(Long uSeq, GroupPlannerCreateDTO groupPlanner, LocalDate parsedDate) {
+    public GroupPlannerEntity saveGroupPlanner(Long uSeq, GroupPlannerCreateDTO groupPlanner, LocalDate parsedDate) {
         try {
             UserEntity userEntity = userRepository.findById(uSeq)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -74,7 +72,7 @@ public class GroupPlannerService {
 
             // 해당 날짜에 이미 만들어둔 플래너가 있는 경우
             if(groupPlannerEntityOptional.isPresent()){
-                return false;
+                return null;
             }
 
             GroupPlannerEntity groupPlannerEntity = new GroupPlannerEntity();
@@ -94,10 +92,10 @@ public class GroupPlannerService {
                     groupTodoRepository.save(groupTodoEntity);
                 }
             }
-            return true;
+            return groupPlannerEntity;
         }catch (Exception e){
             System.out.println("e::"+e.getMessage());
-            return false;
+            return null;
         }
     }
 

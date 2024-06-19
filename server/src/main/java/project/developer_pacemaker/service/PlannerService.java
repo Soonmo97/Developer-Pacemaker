@@ -61,7 +61,7 @@ public class PlannerService {
     }
 
     @Transactional
-    public boolean savePlanner(Long uSeq, PlannerCreateDTO planner, String date) {
+    public PlannerEntity savePlanner(Long uSeq, PlannerCreateDTO planner, String date) {
 
         UserEntity userEntity = userRepository.findById(uSeq)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -73,7 +73,7 @@ public class PlannerService {
 
         // 해당 날짜에 이미 만들어둔 플래너가 있는 경우
         if(plannerEntityOptional.isPresent()){
-            return false;
+            return null;
         }
 
         PlannerEntity plannerEntity = new PlannerEntity();
@@ -94,7 +94,7 @@ public class PlannerService {
                 todoRepository.save(todoEntity);
             }
         }
-        return true;
+        return plannerEntity;
     }
 
     public boolean updatePlannerBypSeq(Long currentUSeq, long pSeq, PlannerCreateDTO planner) {
