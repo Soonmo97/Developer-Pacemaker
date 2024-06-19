@@ -13,4 +13,5 @@ public interface StudyGroupRepository extends JpaRepository<StudyGroupEntity, Lo
 
     List<StudyGroupEntity> findByUser(UserEntity user);
 
+
 }

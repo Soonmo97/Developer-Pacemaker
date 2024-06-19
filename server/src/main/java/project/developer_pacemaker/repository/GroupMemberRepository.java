@@ -24,6 +24,9 @@ public interface GroupMemberRepository extends JpaRepository<GroupMembersEntity,
     @Query("SELECT gm FROM GroupMembersEntity gm WHERE gm.user.uSeq = :uSeq")
     GroupMembersEntity findByUSeq(long uSeq);
 
+    @Query("SELECT gm FROM GroupMembersEntity gm WHERE gm.user.uSeq = :uSeq")
+    List<GroupMembersEntity> findAllByUSeq(long uSeq);
+
     @Query("UPDATE GroupMembersEntity gm SET gm.isDeleted = true WHERE gm.user.uSeq = :uSeq")
     @Modifying
     @Transactional
