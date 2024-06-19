@@ -78,4 +78,20 @@ public class TodoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to delete todo data");
         }
     }
+
+    @Operation(summary = "개인 투두 완료/미완료 변경", description = "개인 투두 완료/미완료 변경 API 입니다.")
+    @PatchMapping("change/{tSeq}")
+    public ResponseEntity<String> patchComplete(@AuthenticationPrincipal String uSeq, @PathVariable long tSeq){
+        try {
+            Long uSeqLong = Long.parseLong(uSeq);
+            boolean update = todoService.patchComplete(uSeqLong, tSeq);
+            if(update){
+                return new ResponseEntity<>("Your todo updated successfully", HttpStatus.CREATED);
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update todo data");
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update todo data");
+        }
+    }
 }

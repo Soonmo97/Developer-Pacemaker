@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.groupPlanner.GroupPlannerCreateDTO;
 import project.developer_pacemaker.dto.groupPlanner.GroupPlannerRequestDTO;
 import project.developer_pacemaker.dto.groupPlanner.GroupTodoDTO;
+import project.developer_pacemaker.entity.GroupPlannerEntity;
 import project.developer_pacemaker.service.GroupMembersService;
 import project.developer_pacemaker.service.GroupPlannerService;
 
@@ -52,7 +53,7 @@ public class GroupPlannerController {
 
     @Operation(summary = "스터디그룹 플래너 작성", description = "스터디그룹 플래너 작성 API 입니다.")
     @PostMapping("/save")
-    public ResponseEntity<String> saveGroupPlanner(@AuthenticationPrincipal String uSeq, @RequestParam String date, @RequestBody GroupPlannerCreateDTO groupPlanner){
+    public ResponseEntity<?> saveGroupPlanner(@AuthenticationPrincipal String uSeq, @RequestParam String date, @RequestBody GroupPlannerCreateDTO groupPlanner){
         try{
             Long uSeqLong = Long.parseLong(uSeq);
 
@@ -65,9 +66,9 @@ public class GroupPlannerController {
             String cleanedDate = date.trim().replaceAll("[^\\d-]", "");
             LocalDate parsedDate = LocalDate.parse(cleanedDate);
 
-            boolean save = groupPlannerService.saveGroupPlanner(uSeqLong, groupPlanner, parsedDate);
-            if(save){
-                return new ResponseEntity<>("Your planner saved successfully", HttpStatus.CREATED);
+            GroupPlannerEntity newPlanner = groupPlannerService.saveGroupPlanner(uSeqLong, groupPlanner, parsedDate);
+            if(newPlanner !=null){
+                return new ResponseEntity<>(newPlanner, HttpStatus.CREATED);
             }else{
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save planner data");
             }

@@ -112,4 +112,27 @@ public class TodoService {
             return false;
         }
     }
+
+    public boolean patchComplete(Long currentUSeq, long tSeq) {
+        try{
+            Optional<TodoEntity> todoEntityOptional = todoRepository.findBytSeqAndIsDeletedFalse(tSeq);
+            if(todoEntityOptional.isPresent()){
+                TodoEntity todoEntity = todoEntityOptional.get();
+                PlannerEntity plannerEntity = todoEntity.getPlanner();
+                if(plannerEntity.getUser().getUSeq()==currentUSeq){
+                    boolean patch = todoEntity.isCompleted();
+                    todoEntity.setCompleted(!patch);
+                    todoRepository.save(todoEntity);
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                return false;
+            }
+        }catch (Exception e){
+            System.out.println("e::"+e.getMessage());
+            return false;
+        }
+    }
 }

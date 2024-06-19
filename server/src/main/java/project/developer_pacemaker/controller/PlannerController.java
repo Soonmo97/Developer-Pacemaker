@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.planner.PlannerCreateDTO;
 import project.developer_pacemaker.dto.planner.PlannerDTO;
+import project.developer_pacemaker.entity.PlannerEntity;
 import project.developer_pacemaker.service.PlannerService;
 
 import java.time.LocalDate;
@@ -33,13 +34,14 @@ public class PlannerController {
     }
     @Operation(summary = "개인 플래너 작성", description = "개인 플래너 작성 API 입니다.")
     @PostMapping()
-    public ResponseEntity<String> savePlanner(@AuthenticationPrincipal String uSeq, @RequestParam String date, @RequestBody PlannerCreateDTO planner){
+    public ResponseEntity<?> savePlanner(@AuthenticationPrincipal String uSeq, @RequestParam String date, @RequestBody PlannerCreateDTO planner){
         try{
             Long uSeqLong = Long.parseLong(uSeq);
-            boolean save = plannerService.savePlanner(uSeqLong, planner, date);
+            PlannerEntity newPlanner = plannerService.savePlanner(uSeqLong, planner, date);
 
-            if(save){
-                return new ResponseEntity<>("Your planner saved successfully", HttpStatus.CREATED);
+            if(newPlanner !=null){
+                System.out.println("newPlanner:: "+newPlanner.getPSeq());
+                return new ResponseEntity<>(newPlanner, HttpStatus.CREATED);
             }else{
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save planner data");
             }
