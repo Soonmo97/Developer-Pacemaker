@@ -131,8 +131,12 @@ public class StudyGroupService {
     }
 
     public List<StudyGroupEntity> myGetAll(final String uSeq) {
-        UserEntity user = findByUSeq(uSeq);
-        return studyGroupRepository.findByUser(user);
+        List<StudyGroupEntity> studyGroupEntities = new ArrayList<>();
+         List<GroupMembersEntity> groupMembersEntities = groupMemberRepository.findAllByUSeq(Long.parseLong(uSeq));
+         for (GroupMembersEntity groupMembers : groupMembersEntities) {
+            studyGroupEntities.add(groupMembers.getStudyGroup());
+         }
+        return studyGroupEntities;
     }
 
     public boolean getStatus(final long sgSeq) {
