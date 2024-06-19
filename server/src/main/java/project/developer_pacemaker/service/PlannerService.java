@@ -97,6 +97,27 @@ public class PlannerService {
         return true;
     }
 
+    public boolean updatePlannerBypSeq(Long currentUSeq, long pSeq, PlannerCreateDTO planner) {
+
+        try{
+            PlannerEntity plannerEntity = plannerRepository.findById(pSeq)
+                    .orElseThrow(() -> new RuntimeException("Planner data with pSeq " + pSeq + " not found"));
+
+            if(plannerEntity.getUser().getUSeq()!=currentUSeq){
+                return false;
+            }
+
+            plannerEntity.setMemo(planner.getMemo());
+            plannerRepository.save(plannerEntity);
+
+            return true;
+        }catch (Exception e){
+            System.out.println("e:: "+e.getMessage());
+            return false;
+        }
+
+    }
+
     public boolean deletePlannerBypSeq(Long currentUSeq, long pSeq) {
         try{
             PlannerEntity plannerEntity = plannerRepository.findById(pSeq)
@@ -186,5 +207,4 @@ public class PlannerService {
         todoDTO.setIsCompleted(todoEntity.isCompleted());
         return todoDTO;
     }
-
 }
