@@ -8,12 +8,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.planner.PlannerCreateDTO;
 import project.developer_pacemaker.dto.planner.PlannerDTO;
-import project.developer_pacemaker.dto.planner.TodoDTO;
 import project.developer_pacemaker.service.PlannerService;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -36,21 +34,6 @@ public class PlannerController {
     @Operation(summary = "개인 플래너 작성", description = "개인 플래너 작성 API 입니다.")
     @PostMapping()
     public ResponseEntity<String> savePlanner(@AuthenticationPrincipal String uSeq, @RequestParam String date, @RequestBody PlannerCreateDTO planner){
-        // 테스트 데이터 ("todoCreateDTOList" 값 필수 -> [] 빈 배열이라도 보낼 것)
-        // todoDTOList 안의 content만 필수(나머지는 선택)
-        // 예시
-//         {
-//          "todoCreateDTOList": [
-//            {
-//              "content": "Study Java3",
-//              "duration":3,
-//              "isCompleted": true
-//            },
-//            {
-//              "content": "Read Spring Boot documentation3"
-//            }
-//          ]
-//        }
         try{
             Long uSeqLong = Long.parseLong(uSeq);
             boolean save = plannerService.savePlanner(uSeqLong, planner, date);
@@ -76,6 +59,19 @@ public class PlannerController {
             return ResponseEntity.ok("Deletion successful");
         }else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to delete planner data");
+        }
+    }
+
+    @Operation(summary = "개인 플래너 수정", description = "개인 플래너 수정 API 입니다.")
+    @PatchMapping("/patch/{pSeq}")
+    public ResponseEntity<String> updatePlanner(@AuthenticationPrincipal String uSeq, @RequestBody PlannerCreateDTO planner, @PathVariable long pSeq){
+        Long uSeqLong = Long.parseLong(uSeq);
+        boolean update = plannerService.updatePlannerBypSeq(uSeqLong, pSeq, planner);
+
+        if(update){
+            return ResponseEntity.ok("Update successful");
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to Update planner data");
         }
     }
 
