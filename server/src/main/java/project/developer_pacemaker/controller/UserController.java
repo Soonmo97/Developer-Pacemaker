@@ -150,6 +150,7 @@ public class UserController {
                 .img(user.getImg())
                 .nickname(user.getNickname())
                 .social(user.getSocial())
+                .uSeq(user.getUSeq())
                 .build();
 
             return ResponseEntity.ok(userDTO);
