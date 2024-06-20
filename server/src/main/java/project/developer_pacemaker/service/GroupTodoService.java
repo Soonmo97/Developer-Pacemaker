@@ -100,7 +100,7 @@ public class GroupTodoService {
                 boolean patch = groupTodoEntity.isCompleted();
                 groupTodoEntity.setCompleted(!patch);
                 groupTodoRepository.save(groupTodoEntity);
-                return true;
+                return groupTodoEntity.isCompleted();
             }
             return false;
         }catch (Exception e){

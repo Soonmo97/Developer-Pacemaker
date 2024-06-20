@@ -62,7 +62,7 @@ public class GroupPlannerService {
     }
 
     @Transactional
-    public GroupPlannerEntity saveGroupPlanner(Long uSeq, GroupPlannerCreateDTO groupPlanner, LocalDate parsedDate) {
+    public GroupTodoEntity saveGroupPlanner(Long uSeq, GroupPlannerCreateDTO groupPlanner, LocalDate parsedDate) {
         try {
             UserEntity userEntity = userRepository.findById(uSeq)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -73,7 +73,7 @@ public class GroupPlannerService {
             Optional<GroupPlannerEntity> groupPlannerEntityOptional = groupPlannerRepository.findByUser_uSeqAndStudyGroup_sgSeqAndIsDeletedAndRegistered(uSeq, groupPlanner.getSgSeq(), false, parsedDate);
 
             // 해당 날짜에 이미 만들어둔 플래너가 있는 경우
-            if(groupPlannerEntityOptional.isPresent()){
+            if (groupPlannerEntityOptional.isPresent()) {
                 return null;
             }
 
@@ -85,16 +85,17 @@ public class GroupPlannerService {
 
             List<GroupTodoCreateDTO> groupTodoCreateDTOList = groupPlanner.getGroupTodoCreateDTOList();
 
+            GroupTodoEntity groupTodoEntity = null;
             if (groupTodoCreateDTOList != null && !groupTodoCreateDTOList.isEmpty()) {
                 for (GroupTodoCreateDTO groupTodoDTO : groupTodoCreateDTOList) {
-                    GroupTodoEntity groupTodoEntity = new GroupTodoEntity();
+                    groupTodoEntity = new GroupTodoEntity();
                     groupTodoEntity.setGroupPlanner(groupPlannerEntity);
                     groupTodoEntity.setContent(groupTodoDTO.getContent());
                     groupTodoEntity.setCompleted(groupTodoDTO.getIsCompleted() != null ? groupTodoDTO.getIsCompleted() : false);
                     groupTodoRepository.save(groupTodoEntity);
                 }
             }
-            return groupPlannerEntity;
+            return groupTodoEntity;
         }catch (Exception e){
             System.out.println("e::"+e.getMessage());
             return null;

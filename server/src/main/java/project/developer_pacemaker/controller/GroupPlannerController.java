@@ -11,6 +11,7 @@ import project.developer_pacemaker.dto.groupPlanner.GroupPlannerCreateDTO;
 import project.developer_pacemaker.dto.groupPlanner.GroupPlannerRequestDTO;
 import project.developer_pacemaker.dto.groupPlanner.GroupTodoDTO;
 import project.developer_pacemaker.entity.GroupPlannerEntity;
+import project.developer_pacemaker.entity.GroupTodoEntity;
 import project.developer_pacemaker.service.GroupMembersService;
 import project.developer_pacemaker.service.GroupPlannerService;
 
@@ -57,6 +58,7 @@ public class GroupPlannerController {
     @PostMapping("/save")
     public ResponseEntity<?> saveGroupPlanner(@AuthenticationPrincipal String uSeq, @RequestParam String date, @RequestBody GroupPlannerCreateDTO groupPlanner){
         try{
+            System.out.println("=========스터디그룹 플래너 작성=========");
             Long uSeqLong = Long.parseLong(uSeq);
 
             // 해당 스터디 그룹에 포함된 유저인지 확인
@@ -68,7 +70,7 @@ public class GroupPlannerController {
             String cleanedDate = date.trim().replaceAll("[^\\d-]", "");
             LocalDate parsedDate = LocalDate.parse(cleanedDate);
 
-            GroupPlannerEntity newPlanner = groupPlannerService.saveGroupPlanner(uSeqLong, groupPlanner, parsedDate);
+            GroupTodoEntity newPlanner = groupPlannerService.saveGroupPlanner(uSeqLong, groupPlanner, parsedDate);
             if(newPlanner !=null){
                 return new ResponseEntity<>(newPlanner, HttpStatus.CREATED);
             }else{

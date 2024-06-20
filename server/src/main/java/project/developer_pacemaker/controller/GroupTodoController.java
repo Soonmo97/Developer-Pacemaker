@@ -74,21 +74,15 @@ public class GroupTodoController {
 
     @Operation(summary = "그룹 투두 완료/미완료 변경", description = "그룹 투두 완료/미완료 변경 API 입니다.")
     @PatchMapping("change/{gtSeq}")
-    public ResponseEntity<String> patchTodoComplete(@AuthenticationPrincipal String uSeq, @PathVariable long gtSeq){
+    public ResponseEntity<Boolean> patchTodoComplete(@AuthenticationPrincipal String uSeq, @PathVariable long gtSeq){
         try {
-            System.out.println("=============그룹 투두 완료/미완료 변경=============");
             Long uSeqLong = Long.parseLong(uSeq);
-            System.out.println("=============uSeqLong============="+uSeqLong);
             boolean update = groupTodoService.patchComplete(uSeqLong, gtSeq);
 
-            if(update){
-                return new ResponseEntity<>("Your todo updated successfully", HttpStatus.CREATED);
-            }else{
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update todo data");
-            }
+                return new ResponseEntity<>(update, HttpStatus.CREATED);
         }catch (Exception e){
             System.out.println("e::"+e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update todo data");
+            return new ResponseEntity<>(null, HttpStatus.CREATED);
         }
     }
 }
