@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.groupPlanner.GroupTodoCreateDTO;
+import project.developer_pacemaker.entity.GroupTodoEntity;
 import project.developer_pacemaker.service.GroupTodoService;
 
 @RestController
@@ -17,14 +18,14 @@ public class GroupTodoController {
 
     @Operation(summary = "그룹 투두 생성", description = "그룹 투두 생성 API 입니다.")
     @PostMapping("/{gpSeq}")
-    public ResponseEntity<String> saveTodo(@AuthenticationPrincipal String uSeq, @PathVariable long gpSeq, @RequestBody GroupTodoCreateDTO groupTodo){
+    public ResponseEntity<?> saveTodo(@AuthenticationPrincipal String uSeq, @PathVariable long gpSeq, @RequestBody GroupTodoCreateDTO groupTodo){
         try {
             System.out.println("======groupTodo========"+groupTodo.getContent()+"    "+gpSeq);
             Long uSeqLong = Long.parseLong(uSeq);
-            boolean save = groupTodoService.saveGroupTodo(uSeqLong, gpSeq, groupTodo);
+            GroupTodoEntity newTodo = groupTodoService.saveGroupTodo(uSeqLong, gpSeq, groupTodo);
 
-            if(save){
-                return new ResponseEntity<>("Your todo saved successfully", HttpStatus.CREATED);
+            if(newTodo != null){
+                return new ResponseEntity<>(newTodo, HttpStatus.CREATED);
             }else{
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save todo data");
             }
@@ -68,6 +69,26 @@ public class GroupTodoController {
         }catch (Exception e){
             System.out.println("e::"+e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to delete todo data");
+        }
+    }
+
+    @Operation(summary = "그룹 투두 완료/미완료 변경", description = "그룹 투두 완료/미완료 변경 API 입니다.")
+    @PatchMapping("change/{gtSeq}")
+    public ResponseEntity<String> patchTodoComplete(@AuthenticationPrincipal String uSeq, @PathVariable long gtSeq){
+        try {
+            System.out.println("=============그룹 투두 완료/미완료 변경=============");
+            Long uSeqLong = Long.parseLong(uSeq);
+            System.out.println("=============uSeqLong============="+uSeqLong);
+            boolean update = groupTodoService.patchComplete(uSeqLong, gtSeq);
+
+            if(update){
+                return new ResponseEntity<>("Your todo updated successfully", HttpStatus.CREATED);
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update todo data");
+            }
+        }catch (Exception e){
+            System.out.println("e::"+e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to update todo data");
         }
     }
 }

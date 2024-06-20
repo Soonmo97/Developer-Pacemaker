@@ -20,7 +20,7 @@ public class GroupTodoService {
         this.groupTodoRepository = groupTodoRepository;
     }
 
-    public boolean saveGroupTodo(Long uSeq, long gpSeq, GroupTodoCreateDTO groupTodo) {
+    public GroupTodoEntity saveGroupTodo(Long uSeq, long gpSeq, GroupTodoCreateDTO groupTodo) {
         Optional<GroupPlannerEntity> groupPlannerEntityOptional = groupPlannerRepository.findById(gpSeq);
 
         try {
@@ -28,19 +28,19 @@ public class GroupTodoService {
                 GroupPlannerEntity groupPlannerEntity = groupPlannerEntityOptional.get();
                 if (groupPlannerEntity.getUser().getUSeq() != uSeq) {
                     System.out.println("본인의 플래너가 아니면 투두 추가 불가능");
-                    return false;
+                    return null;
                 }
                 GroupTodoEntity groupTodoEntity = new GroupTodoEntity();
                 groupTodoEntity.setGroupPlanner(groupPlannerEntity);
                 groupTodoEntity.setContent(groupTodo.getContent());
                 groupTodoEntity.setCompleted(groupTodo.getIsCompleted() != null ? groupTodo.getIsCompleted() : false);
                 groupTodoRepository.save(groupTodoEntity);
-                return true;
+                return groupTodoEntity;
             }
-            return false;
+            return null;
         }catch (Exception e){
             System.out.println("eeeeeeeeee"+e.getMessage());
-            return false;
+            return null;
         }
     }
 
@@ -78,6 +78,28 @@ public class GroupTodoService {
                     return false;
                 }
                 groupTodoRepository.delete(groupTodoEntity);
+                return true;
+            }
+            return false;
+        }catch (Exception e){
+            System.out.println("e::"+e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean patchComplete(Long uSeq, long gtSeq) {
+        try{
+            Optional<GroupTodoEntity> groupTodoEntityOptional = groupTodoRepository.findById(gtSeq);
+            if(groupTodoEntityOptional.isPresent()){
+                GroupTodoEntity groupTodoEntity = groupTodoEntityOptional.get();
+                GroupPlannerEntity groupPlannerEntity = groupTodoEntity.getGroupPlanner();
+                // 본인만 수정 가능
+                if(groupPlannerEntity.getUser().getUSeq() !=uSeq){
+                    return false;
+                }
+                boolean patch = groupTodoEntity.isCompleted();
+                groupTodoEntity.setCompleted(!patch);
+                groupTodoRepository.save(groupTodoEntity);
                 return true;
             }
             return false;
