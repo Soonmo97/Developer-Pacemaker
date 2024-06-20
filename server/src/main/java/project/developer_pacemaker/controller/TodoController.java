@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import project.developer_pacemaker.dto.planner.TodoCreateDTO;
 import project.developer_pacemaker.dto.planner.TodoDTO;
+import project.developer_pacemaker.entity.TodoEntity;
 import project.developer_pacemaker.service.TodoService;
 
 import java.util.List;
@@ -32,13 +33,13 @@ public class TodoController {
 
     @Operation(summary = "개인 투두 생성", description = "개인 투두 생성 API 입니다.")
     @PostMapping("/{pSeq}")
-    public ResponseEntity<String> saveTodo(@AuthenticationPrincipal String uSeq, @PathVariable long pSeq, @RequestBody TodoCreateDTO todo){
+    public ResponseEntity<?> saveTodo(@AuthenticationPrincipal String uSeq, @PathVariable long pSeq, @RequestBody TodoCreateDTO todo){
         try {
             Long uSeqLong = Long.parseLong(uSeq);
 
-            boolean save = todoService.saveTodo(uSeqLong, pSeq, todo );
-            if(save){
-                return new ResponseEntity<>("Your todo saved successfully", HttpStatus.CREATED);
+            TodoEntity newTodo = todoService.saveTodo(uSeqLong, pSeq, todo );
+            if(newTodo != null){
+                return new ResponseEntity<>(newTodo, HttpStatus.CREATED);
             }else{
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to save todo data");
             }

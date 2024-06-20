@@ -42,7 +42,7 @@ public class TodoService {
         return null;
     }
 
-    public boolean saveTodo(Long currentUSeq, long pSeq, TodoCreateDTO todo) {
+    public TodoEntity saveTodo(Long currentUSeq, long pSeq, TodoCreateDTO todo) {
         Optional<PlannerEntity> plannerEntityOptional = plannerRepository.findBypSeqAndIsDeletedFalse(pSeq);
 
         if(plannerEntityOptional.isPresent()){
@@ -54,12 +54,12 @@ public class TodoService {
                 todoEntity.setDuration(todo.getDuration() != null ? todo.getDuration() : 0.0f);
                 todoEntity.setCompleted(todo.getIsCompleted() != null ? todo.getIsCompleted() : false);
                 todoRepository.save(todoEntity);
-                return true;
+                return todoEntity;
             }else{
-               return false;
+               return null;
             }
         }
-        return false;
+        return null;
     }
 
     public boolean updateTodo(Long currentUSeq, long tSeq, TodoDTO todo) {

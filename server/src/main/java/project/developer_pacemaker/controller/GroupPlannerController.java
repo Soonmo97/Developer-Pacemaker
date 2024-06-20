@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import project.developer_pacemaker.dto.groupPlanner.GroupPlannerControllDTO;
 import project.developer_pacemaker.dto.groupPlanner.GroupPlannerCreateDTO;
 import project.developer_pacemaker.dto.groupPlanner.GroupPlannerRequestDTO;
 import project.developer_pacemaker.dto.groupPlanner.GroupTodoDTO;
@@ -43,7 +44,7 @@ public class GroupPlannerController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to load planner data");
             }
 
-            List<GroupTodoDTO> planner = groupPlannerService.getPlannerByDate(groupPlannerRequestDTO.getSgSeq(),groupPlannerRequestDTO.getUSeq(), date);
+            List<GroupPlannerControllDTO> planner = groupPlannerService.getPlannerByDate(groupPlannerRequestDTO.getSgSeq(),groupPlannerRequestDTO.getUSeq(), date);
             return new ResponseEntity<>(planner, HttpStatus.OK);
         }catch (Exception e){
             System.out.println("====e::"+e.getMessage());

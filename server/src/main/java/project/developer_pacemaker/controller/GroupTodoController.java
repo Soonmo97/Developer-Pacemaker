@@ -19,6 +19,7 @@ public class GroupTodoController {
     @PostMapping("/{gpSeq}")
     public ResponseEntity<String> saveTodo(@AuthenticationPrincipal String uSeq, @PathVariable long gpSeq, @RequestBody GroupTodoCreateDTO groupTodo){
         try {
+            System.out.println("======groupTodo========"+groupTodo.getContent()+"    "+gpSeq);
             Long uSeqLong = Long.parseLong(uSeq);
             boolean save = groupTodoService.saveGroupTodo(uSeqLong, gpSeq, groupTodo);
 
