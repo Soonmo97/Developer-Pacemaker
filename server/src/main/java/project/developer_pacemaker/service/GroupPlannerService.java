@@ -35,7 +35,7 @@ public class GroupPlannerService {
         this.studyGroupRepository = studyGroupRepository;
     }
 
-    public List<GroupPlannerControllDTO> getPlannerByDate(long sgSeq, long uSeq, String date) {
+    public Map<Long, List<GroupPlannerControllDTO>> getPlannerByDate(long sgSeq, long uSeq, String date) {
         try{
             String cleanedDate = date.trim().replaceAll("[^\\d-]", "");
             LocalDate parsedDate = LocalDate.parse(cleanedDate);
@@ -45,9 +45,14 @@ public class GroupPlannerService {
                 GroupPlannerEntity groupPlannerEntity = groupPlannerEntityOptional.get();
                 List<GroupTodoEntity> groupTodoEntityList =groupTodoRepository.findByGroupPlanner(groupPlannerEntity);
 
-                return groupTodoEntityList.stream()
+                Map<Long, List<GroupPlannerControllDTO>> result = new HashMap<>();
+                List<GroupPlannerControllDTO> groupPlannerControllDTOList =  groupTodoEntityList.stream()
                         .map(todo -> new GroupPlannerControllDTO(groupPlannerEntity.getGpSeq(),todo.getGtSeq(), todo.getContent(), todo.isCompleted()))
                         .collect(Collectors.toList());
+
+                result.put(groupPlannerEntity.getGpSeq(), groupPlannerControllDTOList);
+
+                return result;
             }
             return null;
         }catch (Exception e){

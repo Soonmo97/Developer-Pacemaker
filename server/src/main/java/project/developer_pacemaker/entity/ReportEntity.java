@@ -27,9 +27,6 @@ public class ReportEntity {
     @Column(name = "content", nullable = false, length = 255)
     private String content;
 
-    @Builder.Default
-    @Column(name = "totalDuration", nullable = false, columnDefinition = "FLOAT DEFAULT 0")
-    private Float totalDuration = 0.0f;
 
     @CreationTimestamp
     @Column(name = "registered", nullable = false)

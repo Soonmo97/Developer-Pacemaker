@@ -44,7 +44,8 @@ public class GroupPlannerController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to load planner data");
             }
 
-            List<GroupPlannerControllDTO> planner = groupPlannerService.getPlannerByDate(groupPlannerRequestDTO.getSgSeq(),groupPlannerRequestDTO.getUSeq(), date);
+            Map<Long, List<GroupPlannerControllDTO>> planner = groupPlannerService.getPlannerByDate(groupPlannerRequestDTO.getSgSeq(),groupPlannerRequestDTO.getUSeq(), date);
+
             return new ResponseEntity<>(planner, HttpStatus.OK);
         }catch (Exception e){
             System.out.println("====e::"+e.getMessage());
