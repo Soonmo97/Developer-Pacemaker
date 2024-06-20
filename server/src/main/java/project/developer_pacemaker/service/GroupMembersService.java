@@ -120,12 +120,18 @@ public class GroupMembersService {
     }
 
     public Boolean checkGroupMember(Long uSeq, long sgSeq) {
-        StudyGroupEntity studyGroup = studyGroupRepository.findById(sgSeq).orElseThrow(() -> new RuntimeException("RuntimeException"));
-        Optional <GroupMembersEntity> member = groupMemberRepository.findByUSeqAndStudyGroup2(uSeq, sgSeq);
+        try{
+            StudyGroupEntity studyGroup = studyGroupRepository.findById(sgSeq).orElseThrow(() -> new RuntimeException("RuntimeException"));
+            Optional <GroupMembersEntity> member = groupMemberRepository.findByUSeqAndStudyGroup2(uSeq, sgSeq);
 
-        if(member.isPresent()){
-            return true;
+            if(member.isPresent()){
+                return true;
+            }
+            return false;
+        }catch (Exception e){
+            System.out.println("e=============="+e.getMessage());
+            return false;
         }
-        return false;
+
     }
 }

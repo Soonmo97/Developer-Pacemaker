@@ -2,10 +2,7 @@ package project.developer_pacemaker.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.developer_pacemaker.dto.groupPlanner.GroupPlannerCreateDTO;
-import project.developer_pacemaker.dto.groupPlanner.GroupPlannerRequestDTO;
-import project.developer_pacemaker.dto.groupPlanner.GroupTodoCreateDTO;
-import project.developer_pacemaker.dto.groupPlanner.GroupTodoDTO;
+import project.developer_pacemaker.dto.groupPlanner.*;
 import project.developer_pacemaker.entity.GroupPlannerEntity;
 import project.developer_pacemaker.entity.GroupTodoEntity;
 import project.developer_pacemaker.entity.StudyGroupEntity;
@@ -38,7 +35,7 @@ public class GroupPlannerService {
         this.studyGroupRepository = studyGroupRepository;
     }
 
-    public List<GroupTodoDTO> getPlannerByDate(long sgSeq, long uSeq, String date) {
+    public List<GroupPlannerControllDTO> getPlannerByDate(long sgSeq, long uSeq, String date) {
         try{
             String cleanedDate = date.trim().replaceAll("[^\\d-]", "");
             LocalDate parsedDate = LocalDate.parse(cleanedDate);
@@ -49,7 +46,7 @@ public class GroupPlannerService {
                 List<GroupTodoEntity> groupTodoEntityList =groupTodoRepository.findByGroupPlanner(groupPlannerEntity);
 
                 return groupTodoEntityList.stream()
-                        .map(todo -> new GroupTodoDTO(todo.getGtSeq(), todo.getContent(), todo.isCompleted()))
+                        .map(todo -> new GroupPlannerControllDTO(groupPlannerEntity.getGpSeq(),todo.getGtSeq(), todo.getContent(), todo.isCompleted()))
                         .collect(Collectors.toList());
             }
             return null;
