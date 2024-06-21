@@ -41,6 +41,7 @@ public class WebSecurityConfig {
             .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/api/user","/api/user/login","/api/user/reset-password","/api/kakao/kakaoLogin").permitAll()
 //                .requestMatchers("/api/**", "/swagger-ui/**", "/v3/**").permitAll()
                 .anyRequest().authenticated()
             );
