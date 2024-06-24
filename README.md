@@ -1,5 +1,5 @@
 
-# 👨‍👩‍👦‍👦 Developer Pacemaker 👨‍👩‍👦‍👦 
+# 👨‍💻 Developer Pacemaker 👩‍💻 
 ## 개발자를 위한 학습 도우미(플래너) 👉 http://00.000.000.000/
 
 ![image](https://github.com/Soonmo97/Developer-Pacemaker-server/assets/154948606/7a320fc3-94e7-405e-91e3-f3f7031cfc72)
@@ -33,22 +33,29 @@
 ### 스터디그룹 관리
 -
 -
+- 
 
 ### 
 
 ### 회원가입 및 로그인 
 - jwt토큰 및 bcrypt 사용
+-
+-
+
 
 ### 소셜 로그인 구현(카카오)
 - 카카오 OAuth2.0 토큰 발급 및 사용자 정보 요청
 - 사용자 인증 후 jwt토큰 발급으로 로그인 처리
+- 
 
 ### Chat-GPT API 연결
 -
 -
 
 ### 학습 플래너 관리
-
+-
+-
+-
 
 ## 🔧 Stack(Library&Framwork etc)
 - **Front-end**: React
@@ -84,7 +91,8 @@ backend
 
 ## 👨‍💻 Role & Contribution
 
-![image](https://github.com/HJ17J/PetStay-backend/assets/107241014/65e4ee30-7446-45bc-afab-2b22c5696518)
+![image](https://github.com/Soonmo97/Developer-Pacemaker-server/assets/154948606/820b7cb1-30c4-446b-8dbf-f9f9171b1f1a)
+![image](https://github.com/Soonmo97/Developer-Pacemaker-server/assets/154948606/99e56f74-f39d-4902-afc2-026b923db2fc)
 
 ## 👨‍👩‍👧‍👦 Developer
 *  **권오진** (깃허브 주소)
