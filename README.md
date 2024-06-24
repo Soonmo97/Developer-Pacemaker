@@ -1,6 +1,8 @@
 
 # 👨‍💻 Developer Pacemaker 👩‍💻 
-## 개발자를 위한 학습 도우미(플래너) 👉 http://00.000.000.000/
+## 개발자를 위한 학습 도우미(플래너) → http://00.000.000.000
+### 🏆 SeSAC(청년취업사관학교) 풀스택 웹개발 부트캠프 3차 팀프로젝트 우수상 수상작
+
 
 ![image](https://github.com/Soonmo97/Developer-Pacemaker-server/assets/154948606/7a320fc3-94e7-405e-91e3-f3f7031cfc72)
 
@@ -12,9 +14,6 @@
 - PW: `1234`
 
 ## 📖 Description
-
-<p style="font-size: 18px;"><b>✨3차 팀프로젝트 우수상 수상작</b></p>
-<div markdown="1">
 
 혼자 외롭게 공부하는 개발자를 위해 "페이스 메이커"를 만들어주기 위한 공간 제공합니다.
 
