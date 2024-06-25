@@ -29,12 +29,6 @@
 시연영상
 
 ## ⭐ Main Feature
-### 스터디그룹 관리
-- 스터디그룹 CRUD(그룹장 권한)
-- 그룹장 권한 확인을 위해 요청에 담긴 시퀀스와 로그인(토큰) 시퀀스 비교
-- 스터디그룹에 그룹장 시퀀스로 그룹장 관리
-
-### 
 
 ### 회원가입 및 로그인 
 - jwt토큰 및 bcrypt 사용
@@ -44,16 +38,23 @@
 ### 소셜 로그인 구현(카카오)
 - 카카오 OAuth2.0 토큰 발급 및 사용자 정보 요청
 - 사용자 인증 후 jwt토큰 발급으로 로그인 처리
-- 
 
-### Chat-GPT API 연결
--
--
 
-### 학습 플래너 관리
--
--
--
+### 스터디그룹 관리
+- 스터디그룹 CRUD(그룹장 권한)
+- 그룹장 권한 확인을 위해 요청에 담긴 시퀀스와 로그인(토큰) 시퀀스 비교
+- 스터디그룹에 그룹장 시퀀스로 그룹장 관리
+
+
+### Chat-GPT API
+- OpenAI GPT 모델을 활용하여 사용자 질문에 대한 답변 제공
+- OpenAI API 키를 사용하여 인증 및 RestTemplate을 통해 HTTP 요청 처리
+
+
+### 학습 플래너 관리 (개인/스터디그룹)
+- JWT 토큰을 이용한 사용자 인증 및 권한 확인
+- 플래너 일자별 CRUD API 구현
+- 월별 완료된 할일 수를 집계하여 잔디 기능 제공
 
 ## 🔧 Stack(Library&Framwork etc)
 - **Front-end**: React
@@ -93,8 +94,8 @@ backend
 ![image](https://github.com/Soonmo97/Developer-Pacemaker-server/assets/154948606/99e56f74-f39d-4902-afc2-026b923db2fc)
 
 ## 👨‍👩‍👧‍👦 Developer
-*  **권오진** (깃허브 주소)
-*  **권태현** (깃허브 주소)
+*  **권오진** (https://github.com/ohjin5)
+*  **권태현** (https://github.com/Matryoshkaaaa)
 *  **권순모** (https://github.com/Soonmo97)
-*  **김화영** (깃허브 주소)
-*  **이형석** (깃허브 주소)
+*  **김화영** (https://github.com/dotoritoring)
+*  **이형석** (https://github.com/yhs0329)
