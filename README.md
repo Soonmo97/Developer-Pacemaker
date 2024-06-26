@@ -6,7 +6,6 @@
 
 ![image](https://github.com/Soonmo97/Developer-Pacemaker-server/assets/154948606/7a320fc3-94e7-405e-91e3-f3f7031cfc72)
 
-
 ### 작업 기간: 2024.05.31. ~ 2024.06.21.
 ### 인원: 5명(프론트엔드 2명, 백엔드 3명)
 ### 로그인:
@@ -29,6 +28,9 @@
 시연영상
 
 ## ⭐ Main Feature
+
+### 메인 페이지
+- react-slick 라이브러리 , react-calendar 라이브러리를 사용해 슬라이드, 달력 구현
 
 ### 회원가입 및 로그인 
 - jwt토큰 및 bcrypt 사용
