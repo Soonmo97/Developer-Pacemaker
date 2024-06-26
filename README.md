@@ -25,7 +25,7 @@
 
 ## :baby_chick: Demo
 
-시연영상
+https://github.com/Soonmo97/Developer-Pacemaker-server/assets/154948606/a91b9ca2-3b4b-4259-9a7f-ba768daad434
 
 ## ⭐ Main Feature
 
